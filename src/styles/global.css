@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+    @apply h-full w-full;
+}
+
+html {
+    @apply antialiased bg-[#212121] text-white;
+}
+
+* {
+    @apply m-0 p-0 box-border scroll-smooth;
+}
