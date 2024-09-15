@@ -3,8 +3,8 @@
     "baseUrl": ".",
     "paths": {
       "@public/*": ["public/*"],
-      "@lib/*": ["src/app/lib/*"],
-      "@ui/*": ["src/app/ui/*"],
+      "@lib/*": ["./app/lib/*"],
+      "@ui/*": ["./app/ui/*"],
     },
     "target": "ES2020",
     "useDefineForClassFields": true,
