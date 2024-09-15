@@ -1,5 +1,5 @@
 import SyntaxHighlighter from 'react-syntax-highlighter'
-import CopyButton from './CopyButton.tsx'
+import CopyButton from './copy-button.tsx'
 import { vs2015 } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
     language: string
 }
 
-const CodeBlock = ({ code, language }: Props) => {
+const Codeblock = ({ code, language }: Props) => {
     return (
         <div className="flex items-start justify-between">
             <SyntaxHighlighter
@@ -26,4 +26,4 @@ const CodeBlock = ({ code, language }: Props) => {
     )
 }
 
-export default CodeBlock
+export default Codeblock

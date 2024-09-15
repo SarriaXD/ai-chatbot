@@ -4,11 +4,11 @@ import {
     List,
     ListItem,
     ListItemSuffix,
-} from '@components/Material.tsx'
+} from './material.tsx'
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Close, Dog, Email, Github, Linkedin } from '@public/icons'
-import { useMediaQuery } from '@hooks/useMediaQuery.ts'
+import { useMediaQuery } from '@lib/hooks/use-media-query.ts'
 
 const itemVariants = {
     initial: { x: '-100%' },
@@ -131,7 +131,7 @@ interface SideBarProps {
     onClose: () => void
 }
 
-export function SideBar({ open, onClose }: SideBarProps) {
+export function Sidebar({ open, onClose }: SideBarProps) {
     const isMobile = useMediaQuery('(max-width: 735px)')
     useEffect(() => {
         if (!isMobile) onClose()

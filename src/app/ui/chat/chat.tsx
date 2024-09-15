@@ -1,11 +1,11 @@
 'use client'
 
-import MessageList from './MessageList.tsx'
+import MessageList from './message-list.tsx'
 import { useChat } from 'ai/react'
-import { useChatScroll } from '@hooks/home/useChatScroll.ts'
-import ChatPanel from './ChatPanel.tsx'
-import EmptyMessagePlaceholder from './EmptyMessagePlaceholder.tsx'
-import useChatFiles from '@hooks/home/useChatFiles.ts'
+import { useChatScroll } from '@lib/hooks/chat/use-chat-scroll.ts'
+import ChatPanel from './chat-panel/chat-panel.tsx'
+import EmptyMessagePlaceholder from './empty-message-placeholder.tsx'
+import useChatFiles from '@lib/hooks/chat/use-chat-files.ts'
 import { useThrottle } from '@uidotdev/usehooks'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Add } from '@public/icons'
@@ -61,7 +61,7 @@ const DragZoneOverlay = ({ isDragActive }: { isDragActive: boolean }) => {
     )
 }
 
-const ChatContent = () => {
+const Chat = () => {
     const {
         messages: fasterMessages,
         input,
@@ -123,4 +123,4 @@ const ChatContent = () => {
     )
 }
 
-export default ChatContent
+export default Chat

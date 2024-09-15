@@ -1,5 +1,5 @@
 import { FormEvent } from 'react'
-import ChatTextfield, { FilesState } from './ChatTextfield.tsx'
+import ChatTextfield, { FilesState } from './chat-textfield.tsx'
 
 interface ChatPanelProps {
     value: string

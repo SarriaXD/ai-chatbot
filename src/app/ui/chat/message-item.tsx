@@ -1,8 +1,8 @@
-import MarkdownBlock from './MarkdownBlock.tsx'
+import MarkdownBlock from './markdown-block/markdown-block.tsx'
 import { Message, ToolInvocation } from 'ai'
 import { Dog } from '@public/icons'
-import { WeatherData } from '../utils/weather-utils.ts'
-import { SearchResults } from '../utils/search-utils.ts'
+import { WeatherData } from '@lib/utils/weather-utils.ts'
+import { SearchResults } from '@lib/utils/search-utils.ts'
 
 interface MessageProps {
     message: Message

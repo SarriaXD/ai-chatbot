@@ -1,6 +1,6 @@
-import MessageItem from './MessageItem.tsx'
+import MessageItem from './message-item.tsx'
 import { Message } from 'ai'
-import ThreeDotsLoading from './ThreeDotsLoading.tsx'
+import ThreeDotsLoading from './three-dots-loading.tsx'
 
 interface MessageListProps {
     messages: Message[]

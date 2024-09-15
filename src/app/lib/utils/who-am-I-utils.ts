@@ -6,6 +6,7 @@ const whoAmI = async () => {
     const resultFromGithub = await retrieveSearch(
         'https://github.com/SarriaXD?tab=repositories'
     )
+    console.log('result for who am I', resultFromWebsite, resultFromGithub)
     return {
         images: [
             ...(resultFromWebsite?.images ?? []),

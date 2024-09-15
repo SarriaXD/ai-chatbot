@@ -1,9 +1,9 @@
 import Image from 'next/image'
-import { Button } from '@components/Material.tsx'
+import { Button } from '@ui/material.tsx'
 import Link from 'next/link'
 import { not_found } from '@public/images'
-import { Header } from '@components/Header.tsx'
-import { Footer } from '@components/Footer.tsx'
+import { Header } from '@ui/header.tsx'
+import { Footer } from '@ui/footer.tsx'
 
 const NotFoundImage = () => {
     return (

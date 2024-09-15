@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import React from 'react'
-import ImagePreviewItem from './ImagePreviewItem.tsx'
-import PDFPreviewItem from './PDFPreviewItem.tsx'
+import ImagePreviewItem from './image-preview-item.tsx'
+import PDFPreviewItem from './PDF-preview-item.tsx'
 
 interface FilesPreviewProps {
     images: {

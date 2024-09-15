@@ -1,10 +1,10 @@
 import { FormEvent, useCallback, useState } from 'react'
-import { FilesState } from '../../app/components/ChatTextfield.tsx'
+import { FilesState } from '@ui/chat/chat-panel/chat-textfield.tsx'
 import { toast } from 'react-toastify'
-import { toastErrorOptions } from '@components/ToastProvider.tsx'
 import { useDropzone } from 'react-dropzone'
-import { HandleSubmit } from '../../app/components/ChatContent.tsx'
+import { HandleSubmit } from '@ui/chat/chat.tsx'
 import { upload } from '@vercel/blob/client'
+import { toastErrorOptions } from '@lib/config/toast-options.tsx'
 
 const useChatFiles = (onSubmit: HandleSubmit) => {
     const [filesState, setFilesState] = useState<FilesState>({

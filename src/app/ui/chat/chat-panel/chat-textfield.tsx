@@ -1,6 +1,6 @@
 import React, { FormEvent } from 'react'
 import { ArrowUp, FileUpload, Record } from '@public/icons'
-import FilesPreviewGallery from './preview/FilesPreviewGallery.tsx'
+import FilesPreviewGallery from './files-preview-gallery.tsx'
 
 interface ChatTextFieldProps {
     value: string

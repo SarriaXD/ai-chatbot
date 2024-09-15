@@ -1,9 +1,9 @@
 import { convertToCoreMessages, streamText, tool } from 'ai'
 import { z } from 'zod'
-import { retrieveSearch, tavilySearch } from '../../utils/search-utils.ts'
+import { retrieveSearch, tavilySearch } from '@lib/utils/search-utils.ts'
 import { openai } from '@ai-sdk/openai'
-import getWeatherData from '../../utils/weather-utils.ts'
-import getCachedWhoAmI from '../../utils/who-am-I-utils.ts'
+import getWeatherData from '@lib/utils/weather-utils.ts'
+import getCachedWhoAmI from '@lib/utils/who-am-I-utils.ts'
 
 const systemPrompt = (currentDate: string) => {
     return `As a professional, your possess the ability to search for any information on the web only when user really wants to know the latest information. 

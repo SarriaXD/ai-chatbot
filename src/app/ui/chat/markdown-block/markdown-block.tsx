@@ -1,7 +1,7 @@
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
-import CodeBlock from './CodeBlock.tsx'
+import Codeblock from './codeblock.tsx'
 import 'github-markdown-css/github-markdown.css'
 import { ImgHTMLAttributes, memo } from 'react'
 import rehypeExternalLinks from 'rehype-external-links'
@@ -26,7 +26,7 @@ const MarkdownBlock = ({ markdown }: MarkdownBlockProps) => {
                     const { children, className, ...rest } = props
                     const match = /language-(\w+)/.exec(className || '')
                     return match ? (
-                        <CodeBlock
+                        <Codeblock
                             code={String(children).replace(/\n$/, '')}
                             language={match[1]}
                         />

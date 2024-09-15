@@ -1,13 +1,13 @@
-import { Header } from '@components/Header.tsx'
+import { Header } from '@ui/header.tsx'
 import React from 'react'
-import ChatContent from './components/ChatContent.tsx'
+import Chat from '@ui/chat/chat.tsx'
 
 export default function Page() {
     return (
         <>
             <Header />
             <main className="size-full">
-                <ChatContent />
+                <Chat />
             </main>
         </>
     )
