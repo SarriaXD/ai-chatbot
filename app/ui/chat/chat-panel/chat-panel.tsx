@@ -25,7 +25,7 @@ const ChatPanel = ({
     onStop,
 }: ChatPanelProps) => {
     return (
-        <div className="w-full bg-[#212121] px-4 pb-4 pt-2">
+        <div className="w-full bg-gray-900 px-4 pb-4 pt-2">
             <div className="mx-auto max-w-[800px]">
                 <ChatTextfield
                     value={value}

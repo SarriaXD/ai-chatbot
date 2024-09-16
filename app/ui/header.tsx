@@ -50,8 +50,7 @@ export const Header = () => {
     const [open, setOpen] = useState(false)
     const onClose = () => setOpen(false)
     const path = usePathname()
-    const headerBackground =
-        path === '/' ? 'bg-[#212121]' : 'bg-black'
+    const headerBackground = path === '/' ? 'bg-gray-900' : 'bg-black'
     return (
         <>
             <header>

@@ -23,7 +23,7 @@ const PDFPreviewItem = ({
                 PDF
             </span>
             {isUploading && (
-                <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-[#212121] bg-opacity-50">
+                <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-gray-900 bg-opacity-50">
                     <div className="h-12 w-12 animate-spin rounded-full border-b-4 border-l-2 border-r-2 border-t-4 border-[#676767]" />
                 </div>
             )}
