@@ -12,6 +12,7 @@ import Record from './Record.svg'
 import ArrowUp from './ArrowUp.svg'
 import FileUpload from './FileUpload.svg'
 import Warn from './Warn.svg'
+import GoogleSignIn from './GoogleSignIn.svg'
 
 export {
     BurgerMenu,
@@ -28,4 +29,5 @@ export {
     ArrowUp,
     FileUpload,
     Warn,
+    GoogleSignIn,
 }

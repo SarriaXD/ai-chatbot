@@ -1,4 +1,3 @@
-import * as process from 'node:process'
 import { format } from 'date-fns'
 
 export interface WeatherData {

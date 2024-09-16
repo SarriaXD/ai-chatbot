@@ -4,7 +4,6 @@ import { toast } from 'react-toastify'
 import { useDropzone } from 'react-dropzone'
 import { HandleSubmit } from '@ui/chat/chat.tsx'
 import { upload } from '@vercel/blob/client'
-import { toastErrorOptions } from '@lib/config/toast-options.tsx'
 
 const useChatFiles = (onSubmit: HandleSubmit) => {
     const [filesState, setFilesState] = useState<FilesState>({
@@ -27,10 +26,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                         (file) => !allowedContentTypes.includes(file.type)
                     )
                 ) {
-                    toast(
-                        'Currently only images are allowed',
-                        toastErrorOptions
-                    )
+                    toast.error('Currently only images are allowed')
                     return
                 }
                 // filter out files that are already uploaded
@@ -42,18 +38,12 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                 })
                 // check if the total size of files is less than 5MB
                 if (filteredFiles.some((file) => file.size > 5 * 1024 * 1024)) {
-                    toast(
-                        'You can only upload files up to 5MB',
-                        toastErrorOptions
-                    )
+                    toast.error('You can only upload files up to 5MB')
                     return
                 }
                 // check if the total number of files is less than 2
                 if (filteredFiles.length + filesState.images.length > 2) {
-                    toast(
-                        'You can only upload up to 2 files',
-                        toastErrorOptions
-                    )
+                    toast.error('You can only upload up to 2 files')
                     return
                 }
                 // update the preview url for images for better user experience
@@ -150,7 +140,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                     }
                 })
             } catch (e) {
-                toast(`Error uploading files ${e}`, toastErrorOptions)
+                toast.error(`Error uploading files ${e}`)
 
                 // clean up the files that are not uploaded
                 setFilesState((before) => {
@@ -176,7 +166,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                     filesState.images.some((image) => image.isUploading) ||
                     filesState.pdfs.some((pdf) => pdf.isUploading)
                 if (isSomeFilesUploading) {
-                    toast('Files are still uploading', toastErrorOptions)
+                    toast.error('Files are still uploading')
                     return
                 }
                 onSubmit(event, {
@@ -186,7 +176,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                     ],
                 })
             } catch (e) {
-                toast("Can' sent message right now", toastErrorOptions)
+                toast.error("Can' sent message right now")
             } finally {
                 setFilesState(() => {
                     return {

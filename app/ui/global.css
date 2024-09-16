@@ -7,7 +7,7 @@ html, body, #root {
 }
 
 html {
-    @apply antialiased bg-[#212121] text-white;
+    @apply antialiased bg-gray-900 text-white;
 }
 
 * {

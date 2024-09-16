@@ -1,5 +1,3 @@
-import * as process from 'node:process'
-
 export type SearchResults = {
     images: SearchResultImage[]
     results: SearchResultItem[]
