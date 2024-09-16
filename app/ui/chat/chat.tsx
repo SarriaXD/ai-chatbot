@@ -10,6 +10,7 @@ import { useThrottle } from '@uidotdev/usehooks'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Add } from '@public/icons'
 import React from 'react'
+import ChatHeader from '@ui/chat/chat-header.tsx'
 
 export type HandleSubmit = (
     event?: {
@@ -92,11 +93,12 @@ const Chat = () => {
                 className: 'flex size-full flex-col',
             })}
         >
+            <ChatHeader />
             <input {...getInputProps()} />
             <DragZoneOverlay isDragActive={isDragActive} />
             <div className="w-full flex-1 overflow-auto">
                 {messages && messages.length > 0 && (
-                    <div className="px-8 pt-24">
+                    <div className="px-8">
                         <MessageList
                             messages={messages}
                             isLoading={isLoading}

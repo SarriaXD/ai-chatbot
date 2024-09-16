@@ -1,39 +1,12 @@
 'use client'
 
 import { Dog, GoogleSignIn } from '@public/icons'
-import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth'
-import { auth } from '@lib/config/firebase-config.ts'
-import { FormEvent, useEffect } from 'react'
 import { Button } from '@ui/material.tsx'
-import { toast } from 'react-toastify'
-import { useRouter } from 'next/navigation'
+import { useSignIn } from '@lib/hooks/sign-in/use-sign-in.ts'
+import Link from 'next/link'
 
 export default function Page() {
-    const [signInWithEmailAndPassword, user, loading, error] =
-        useSignInWithEmailAndPassword(auth)
-    const router = useRouter()
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        const formData = new FormData(event.currentTarget)
-        const email = formData.get('email') as string
-        const password = formData.get('password') as string
-        await signInWithEmailAndPassword(email, password)
-    }
-
-    useEffect(() => {
-        if (error) {
-            if (error.code == 'auth/invalid-credential') {
-                toast.error('Incorrect login credentials.')
-            } else {
-                toast.error('Unknown Error')
-            }
-        }
-    }, [error])
-    useEffect(() => {
-        if (user) {
-            router.push('/')
-        }
-    }, [user, router])
+    const { loading, handleSubmit, handleGoogleSignIn } = useSignIn()
     return (
         <main className="flex min-h-screen items-center justify-center bg-[#171717]">
             <div className="mx-4 w-full max-w-md rounded-lg bg-gray-900 p-8 shadow-lg">
@@ -78,7 +51,7 @@ export default function Page() {
                     <Button
                         type="submit"
                         color={'blue'}
-                        className="w-full"
+                        className="w-full normal-case"
                         loading={loading}
                     >
                         Sign In
@@ -100,7 +73,8 @@ export default function Page() {
                     <div className="mt-6">
                         <Button
                             color="brown"
-                            className="flex w-full items-center justify-center bg-gray-700"
+                            className="flex w-full items-center justify-center bg-gray-700 normal-case"
+                            onClick={handleGoogleSignIn}
                         >
                             <GoogleSignIn className="mr-2 h-5 w-5" />
                             Google
@@ -110,12 +84,12 @@ export default function Page() {
 
                 <p className="text-sm mt-6 text-center text-gray-400">
                     Not a member?{' '}
-                    <a
-                        href="#"
+                    <Link
+                        href="/sign-up"
                         className="font-medium text-blue-500 hover:text-blue-400"
                     >
                         Sign up now
-                    </a>
+                    </Link>
                 </p>
             </div>
         </main>
