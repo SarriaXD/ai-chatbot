@@ -20,12 +20,12 @@ const CopyButton = ({ code }: Props) => {
         }
     }, [copiedCode])
     return (
-        <button className="mt-2">
+        <button>
             <CopyToClipboard text={code} onCopy={() => setCopiedCode(true)}>
                 {copiedCode ? (
-                    <Check className="size-5 rounded border border-green-500 text-green-500" />
+                    <Check className="size-4 rounded border border-green-500 text-green-500" />
                 ) : (
-                    <Copy className="size-5" />
+                    <Copy className="size-4 text-[#ECECEC]" />
                 )}
             </CopyToClipboard>
         </button>

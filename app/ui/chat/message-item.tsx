@@ -40,7 +40,7 @@ const UserItem = ({ message }: MessageProps) => {
     return (
         <div className="flex flex-col gap-4">
             <div className="flex justify-end">
-                <p className="break-all rounded-[20px] bg-[#2F2F2F] px-4 py-2 text-base text-white">
+                <p className="break-all rounded-[20px] bg-[#2F2F2F] px-4 py-2 !font-normal !text-[#ECECEC]">
                     {message.content}
                 </p>
             </div>
