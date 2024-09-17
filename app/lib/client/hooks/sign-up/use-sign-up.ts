@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useState } from 'react'
 import { AuthError, createUserWithEmailAndPassword } from 'firebase/auth'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
-import { auth } from '@lib/config/firebase-config.ts'
+import { auth } from '@lib/client/config/firebase-config.ts'
 
 export const useSignUp = () => {
     const [validationError, setValidationError] = useState('')
@@ -38,7 +38,6 @@ export const useSignUp = () => {
             } else {
                 toast.error('Unknown Error')
             }
-            console.log(error.code)
             setError(null)
         }
     }, [error])

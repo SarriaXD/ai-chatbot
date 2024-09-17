@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Button } from '@ui/material.tsx'
-import { useSignUp } from '@lib/hooks/sign-up/use-sign-up.ts'
+import { useSignUp } from '@lib/client/hooks/sign-up/use-sign-up.ts'
 
 export default function Page() {
     const { loading, validationError, handleSubmit } = useSignUp()

@@ -1,12 +1,10 @@
 import { retrieveSearch } from './search-utils.ts'
-import { cache } from 'react'
 
-const whoAmI = async () => {
+export const getWhoAmI = async () => {
     const resultFromWebsite = await retrieveSearch('https://sarria.ca')
     const resultFromGithub = await retrieveSearch(
         'https://github.com/SarriaXD?tab=repositories'
     )
-    console.log('result for who am I', resultFromWebsite, resultFromGithub)
     return {
         images: [
             ...(resultFromWebsite?.images ?? []),
@@ -62,7 +60,3 @@ Pharmacy Undergraduate Degree\tJuly 2013 – September 2017
 Shandong University\tShandong, China
 
 `
-
-const getCachedWhoAmI = cache(whoAmI)
-
-export default getCachedWhoAmI

@@ -1,11 +1,11 @@
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '@lib/config/firebase-config.ts'
+import { auth } from '@lib/client/config/firebase-config.ts'
 import { Button } from '@ui/material.tsx'
 import { useRouter } from 'next/navigation'
 import { signOut } from 'firebase/auth'
+import useUser from '@lib/client/hooks/use-user.ts'
 
 export default function ChatHeader() {
-    const [user] = useAuthState(auth)
+    const { user } = useUser()
     const router = useRouter()
     const handleSignIn = () => {
         router.push('/sign-in')

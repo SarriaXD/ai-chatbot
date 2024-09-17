@@ -2,15 +2,15 @@
 
 import MessageList from './message-list.tsx'
 import { useChat } from 'ai/react'
-import { useChatScroll } from '@lib/hooks/chat/use-chat-scroll.ts'
+import { useChatScroll } from '@lib/client/hooks/chat/use-chat-scroll.ts'
 import ChatPanel from './chat-panel/chat-panel.tsx'
 import EmptyMessagePlaceholder from './empty-message-placeholder.tsx'
-import useChatFiles from '@lib/hooks/chat/use-chat-files.ts'
+import useChatFiles from '@lib/client/hooks/chat/use-chat-files.ts'
 import { useThrottle } from '@uidotdev/usehooks'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Add } from '@public/icons'
-import React from 'react'
 import ChatHeader from '@ui/chat/chat-header.tsx'
+import { fetchWithToken } from '@lib/client/fetch-with-token.ts'
 
 export type HandleSubmit = (
     event?: {
@@ -70,7 +70,9 @@ const Chat = () => {
         handleSubmit,
         setInput,
         stop,
-    } = useChat()
+    } = useChat({
+        fetch: fetchWithToken,
+    })
 
     const messages = useThrottle(fasterMessages, 16.67)
 

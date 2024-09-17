@@ -1,14 +1,9 @@
 import React, { useEffect } from 'react'
-import {
-    IconButton,
-    List,
-    ListItem,
-    ListItemSuffix,
-} from './material.tsx'
+import { IconButton, List, ListItem, ListItemSuffix } from './material.tsx'
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Close, Dog, Email, Github, Linkedin } from '@public/icons'
-import { useMediaQuery } from '@lib/hooks/use-media-query.ts'
+import { useMediaQuery } from '@lib/client/hooks/use-media-query.ts'
 
 const itemVariants = {
     initial: { x: '-100%' },

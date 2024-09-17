@@ -4,14 +4,14 @@ import {
     signInWithEmailAndPassword,
     signInWithPopup,
 } from 'firebase/auth'
-import { auth } from '@lib/config/firebase-config.ts'
+import { auth } from '@lib/client/config/firebase-config.ts'
 import { AuthError } from 'firebase/auth'
 import { toast } from 'react-toastify'
-import { useAuthState } from 'react-firebase-hooks/auth'
 import { useRouter } from 'next/navigation'
+import useUser from '@lib/client/hooks/use-user.ts'
 
 export const useSignIn = () => {
-    const [user] = useAuthState(auth)
+    const { user } = useUser()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<AuthError | null>(null)
     const router = useRouter()

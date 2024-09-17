@@ -2,7 +2,7 @@
 
 import { Dog, GoogleSignIn } from '@public/icons'
 import { Button } from '@ui/material.tsx'
-import { useSignIn } from '@lib/hooks/sign-in/use-sign-in.ts'
+import { useSignIn } from '@lib/client/hooks/sign-in/use-sign-in.ts'
 import Link from 'next/link'
 
 export default function Page() {

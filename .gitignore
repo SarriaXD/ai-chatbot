@@ -25,3 +25,5 @@ out
 .env.local
 .vercel
 .env*.local
+
+service_account.json

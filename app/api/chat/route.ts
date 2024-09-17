@@ -1,9 +1,14 @@
 import { convertToCoreMessages, streamText, tool } from 'ai'
 import { z } from 'zod'
-import { retrieveSearch, tavilySearch } from '@lib/utils/search-utils.ts'
+import {
+    retrieveSearch,
+    tavilySearch,
+} from '@lib/service/utils/search-utils.ts'
 import { openai } from '@ai-sdk/openai'
-import getWeatherData from '@lib/utils/weather-utils.ts'
-import getCachedWhoAmI from '@lib/utils/who-am-I-utils.ts'
+import getWeatherData from '@lib/service/utils/weather-utils.ts'
+import { validateAndDecodeToken } from '@lib/service/utils/validate-token-utils.ts'
+import { NextResponse } from 'next/server'
+import { getWhoAmI } from '@lib/service/utils/who-am-I-utils.ts'
 
 const systemPrompt = (currentDate: string) => {
     return `As a professional, your possess the ability to search for any information on the web only when user really wants to know the latest information. 
@@ -21,6 +26,11 @@ const systemPrompt = (currentDate: string) => {
 const model = openai('gpt-4o-mini')
 
 export async function POST(request: Request) {
+    const decodedToken = await validateAndDecodeToken(request)
+    if (!decodedToken) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    console.log('decodedToken', decodedToken)
     const { messages } = await request.json()
     const result = await streamText({
         model: model,
@@ -77,7 +87,7 @@ export async function POST(request: Request) {
                 description: 'the identity of the ai',
                 parameters: z.object({}),
                 execute: async () => {
-                    return await getCachedWhoAmI()
+                    return await getWhoAmI()
                 },
             },
         },
