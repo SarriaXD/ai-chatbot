@@ -92,6 +92,6 @@ export async function POST(request: Request) {
         },
     })
     const response = result.toDataStreamResponse()
-    response.headers.set('Access-Control-Allow-Origin', 'localhost:3000')
+    response.headers.set('Access-Control-Allow-Origin', 'http://localhost:3000')
     return response
 }
