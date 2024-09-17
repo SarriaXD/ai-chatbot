@@ -13,6 +13,9 @@ import {
     Chip,
     Spinner,
     Alert,
+    Popover,
+    PopoverHandler,
+    PopoverContent,
 } from '@material-tailwind/react'
 
 export {
@@ -28,4 +31,7 @@ export {
     Chip,
     Spinner,
     Alert,
+    Popover,
+    PopoverHandler,
+    PopoverContent,
 }
