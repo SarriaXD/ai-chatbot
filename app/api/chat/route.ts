@@ -10,6 +10,9 @@ import { validateAndDecodeToken } from '@lib/service/utils/validate-token-utils.
 import { NextResponse } from 'next/server'
 import { getWhoAmI } from '@lib/service/utils/who-am-I-utils.ts'
 
+export const maxDuration = 30
+export const dynamic = 'force-dynamic'
+
 const systemPrompt = (currentDate: string) => {
     return `As a professional, your possess the ability to search for any information on the web only when user really wants to know the latest information. 
     Before you query, you must translate the query to english. 
