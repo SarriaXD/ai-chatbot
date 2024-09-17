@@ -11,6 +11,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Add } from '@public/icons'
 import ChatHeader from '@ui/chat/chat-header.tsx'
 import { fetchWithToken } from '@lib/client/fetch-with-token.ts'
+import { toast } from 'react-toastify'
 
 export type HandleSubmit = (
     event?: {
@@ -72,6 +73,10 @@ const Chat = () => {
         stop,
     } = useChat({
         fetch: fetchWithToken,
+        onError: () => {
+            toast.error("something went wrong, we're working on it")
+        },
+        keepLastMessageOnError: true,
     })
 
     const messages = useThrottle(fasterMessages, 16.67)
