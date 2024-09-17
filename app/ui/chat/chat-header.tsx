@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { signOut } from 'firebase/auth'
 import useUser from '@lib/client/hooks/use-user.ts'
 import { Popover, PopoverContent, PopoverHandler } from '@ui/material.tsx'
-import { SignOut } from '@public/icons'
+import { Menu, SignOut } from '@public/icons'
 
 export default function ChatHeader() {
     const { user } = useUser()
@@ -22,7 +22,9 @@ export default function ChatHeader() {
         router.push('/sign-up')
     }
     return (
-        <div className="flex items-center justify-end px-5 py-3">
+        <div className="flex items-center justify-between px-5 py-3">
+            <Menu className="size-7 transform text-gray-400 transition-all duration-200 hover:cursor-pointer hover:shadow-lg active:scale-95 md:hidden " />
+            <div className={'flex gap-2'}></div>
             {!user && (
                 <div className={'flex gap-2'}>
                     <button
@@ -54,8 +56,8 @@ export default function ChatHeader() {
                                         user.displayName ??
                                         "User's profile picture"
                                     }
-                                    width={40}
-                                    height={40}
+                                    width={32}
+                                    height={32}
                                 />
                             ) : (
                                 user.displayName ?? 'You'
