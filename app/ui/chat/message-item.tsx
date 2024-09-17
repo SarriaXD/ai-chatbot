@@ -67,9 +67,9 @@ const UserItem = ({ message }: MessageProps) => {
 
 const AssistantItem = ({ message }: MessageProps) => {
     return (
-        <div className="flex flex-col gap-4 md:flex-row">
-            <div className="self-start rounded-full bg-gray-300 p-2 text-black">
-                <Dog className="size-6" />
+        <div className="flex gap-4">
+            <div className="size-8 self-start rounded-full bg-gray-300 p-1.5 text-black">
+                <Dog className="size-full" />
             </div>
             <div className="flex-1">
                 <MarkdownBlock markdown={message.content} />

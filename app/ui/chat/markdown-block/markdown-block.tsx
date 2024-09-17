@@ -15,8 +15,8 @@ interface MarkdownBlockProps {
 
 const MarkdownBlock = ({ markdown }: MarkdownBlockProps) => {
     return (
-        <Markdown
-            className="markdown-body !bg-transparent py-2 !font-normal !text-[#ECECEC]"
+        <MessageMarkdownMemoized
+            className="markdown-body !bg-transparent !font-normal !text-[#ECECEC]"
             children={markdown}
             rehypePlugins={[
                 [rehypeExternalLinks, { target: '_blank' }],

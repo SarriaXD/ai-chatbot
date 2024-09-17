@@ -105,7 +105,7 @@ const Chat = () => {
             <DragZoneOverlay isDragActive={isDragActive} />
             <div className="w-full flex-1 overflow-auto">
                 {messages && messages.length > 0 && (
-                    <div className="px-8">
+                    <div className="px-4">
                         <MessageList
                             messages={messages}
                             isLoading={isLoading}
