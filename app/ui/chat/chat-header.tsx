@@ -3,7 +3,9 @@ import { useRouter } from 'next/navigation'
 import { signOut } from 'firebase/auth'
 import useUser from '@lib/client/hooks/use-user.ts'
 import { Popover, PopoverContent, PopoverHandler } from '@ui/material.tsx'
-import { Menu, SignOut } from '@public/icons'
+import { Menu, Pen, SignOut } from '@public/icons'
+import { useState } from 'react'
+import ChatSidebar from '@ui/chat/chat-sidebar.tsx'
 
 export default function ChatHeader() {
     const { user } = useUser()
@@ -21,64 +23,82 @@ export default function ChatHeader() {
     const handleSignUp = () => {
         router.push('/sign-up')
     }
+    const [open, setOpen] = useState(false)
     return (
-        <div className="flex items-center justify-between px-5 py-3">
-            <Menu className="size-7 transform text-gray-400 transition-all duration-200 hover:cursor-pointer hover:shadow-lg active:scale-95 md:hidden " />
-            <div className={'flex gap-2'}></div>
-            {!user && (
-                <div className={'flex gap-2'}>
+        <>
+            <div className="flex items-center justify-between px-4 py-3">
+                <div className={'flex items-center justify-center gap-4'}>
                     <button
-                        onClick={handleSignIn}
-                        className="rounded-full bg-white px-3 py-1 text-[14px] font-semibold text-gray-800 transition duration-300 hover:bg-gray-200"
-                    >
-                        Sign in
-                    </button>
-                    <button
-                        onClick={handleSignUp}
-                        className="hidden rounded-full border border-gray-800 px-3 py-1 text-[14px] font-semibold text-white transition duration-300 hover:border-gray-600 hover:bg-gray-800 md:block"
-                    >
-                        Create account
-                    </button>
-                </div>
-            )}
-            {user && (
-                <Popover placement={'bottom-start'}>
-                    <PopoverHandler>
-                        <button
-                            className={
-                                'overflow-hidden rounded-full border border-gray-400 bg-[#7988FF]'
-                            }
-                        >
-                            {user.photoURL ? (
-                                <img
-                                    src={user.photoURL}
-                                    alt={
-                                        user.displayName ??
-                                        "User's profile picture"
-                                    }
-                                    width={32}
-                                    height={32}
-                                />
-                            ) : (
-                                user.displayName ?? 'You'
-                            )}
-                        </button>
-                    </PopoverHandler>
-                    <PopoverContent
-                        className={
-                            'w-64 overflow-hidden rounded-xl border-[0.5px] border-gray-800 bg-[#2F2F2F] p-2 shadow-none'
+                        className="size-8 rounded p-1 hover:bg-gray-800"
+                        onClick={() =>
+                            setOpen((open) => {
+                                return !open
+                            })
                         }
                     >
+                        <Menu className="size-full transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
+                    </button>
+                    <button className="size-8 rounded p-1.5 hover:bg-gray-800">
+                        <Pen className="size-full transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
+                    </button>
+                </div>
+                <div className={'flex gap-2'}></div>
+                {!user && (
+                    <div className={'flex gap-2'}>
                         <button
-                            onClick={handleSignOut}
-                            className="flex w-full items-center gap-2 rounded-lg p-4 text-[14px] font-semibold text-white hover:bg-gray-800"
+                            onClick={handleSignIn}
+                            className="rounded-full bg-white px-3 py-1 text-[14px] font-semibold text-gray-800 transition duration-300 hover:bg-gray-200"
                         >
-                            <SignOut className={'size-4'} />
-                            Sign out
+                            Sign in
                         </button>
-                    </PopoverContent>
-                </Popover>
-            )}
-        </div>
+                        <button
+                            onClick={handleSignUp}
+                            className="hidden rounded-full border border-gray-800 px-3 py-1 text-[14px] font-semibold text-white transition duration-300 hover:border-gray-600 hover:bg-gray-800 md:block"
+                        >
+                            Create account
+                        </button>
+                    </div>
+                )}
+                {user && (
+                    <Popover placement={'bottom-start'}>
+                        <PopoverHandler>
+                            <button
+                                className={
+                                    'overflow-hidden rounded-full border border-gray-400 bg-[#7988FF]'
+                                }
+                            >
+                                {user.photoURL ? (
+                                    <img
+                                        src={user.photoURL}
+                                        alt={
+                                            user.displayName ??
+                                            "User's profile picture"
+                                        }
+                                        width={32}
+                                        height={32}
+                                    />
+                                ) : (
+                                    user.displayName ?? 'You'
+                                )}
+                            </button>
+                        </PopoverHandler>
+                        <PopoverContent
+                            className={
+                                'w-64 overflow-hidden rounded-xl border-[0.5px] border-gray-800 bg-[#2F2F2F] p-2 shadow-none'
+                            }
+                        >
+                            <button
+                                onClick={handleSignOut}
+                                className="flex w-full items-center gap-2 rounded-lg p-4 text-[14px] font-semibold text-white hover:bg-gray-800"
+                            >
+                                <SignOut className={'size-4'} />
+                                Sign out
+                            </button>
+                        </PopoverContent>
+                    </Popover>
+                )}
+            </div>
+            <ChatSidebar open={open} onClose={() => setOpen(false)} />
+        </>
     )
 }

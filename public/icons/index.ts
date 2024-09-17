@@ -15,6 +15,7 @@ import Warn from './Warn.svg'
 import GoogleSignIn from './GoogleSignIn.svg'
 import SignOut from './SignOut.svg'
 import Menu from './Menu.svg'
+import Pen from './Pen.svg'
 
 export {
     BurgerMenu,
@@ -34,4 +35,5 @@ export {
     GoogleSignIn,
     SignOut,
     Menu,
+    Pen,
 }
