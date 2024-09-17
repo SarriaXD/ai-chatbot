@@ -31,7 +31,6 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     const { messages } = await request.json()
-    console.log(messages)
     const result = await streamText({
         model: model,
         system: systemPrompt(new Date().toISOString()),
