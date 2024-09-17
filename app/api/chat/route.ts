@@ -30,7 +30,6 @@ export async function POST(request: Request) {
     if (!decodedToken) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    console.log('decodedToken', decodedToken)
     const { messages } = await request.json()
     const result = await streamText({
         model: model,

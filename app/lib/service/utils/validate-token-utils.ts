@@ -1,12 +1,11 @@
-import '@lib/service/config/firebase-admin-config'
-import { auth } from 'firebase-admin'
+import { admin } from '@lib/service/config/firebase-admin-config'
 import { DecodedIdToken } from 'firebase-admin/auth'
 
 async function validateFirebaseToken(
     token: string
 ): Promise<DecodedIdToken | null> {
     try {
-        return await auth().verifyIdToken(token)
+        return await admin.auth().verifyIdToken(token)
     } catch (error) {
         console.error('Error validating Firebase token:', error)
         return null
