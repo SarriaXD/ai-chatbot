@@ -31,6 +31,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     const { messages } = await request.json()
+    console.log(messages)
     const result = await streamText({
         model: model,
         system: systemPrompt(new Date().toISOString()),
@@ -93,5 +94,11 @@ export async function POST(request: Request) {
     })
     const response = result.toDataStreamResponse()
     response.headers.set('Access-Control-Allow-Origin', 'http://localhost:3000')
+    response.headers.set('Access-Control-Allow-Credentials', 'true')
+    response.headers.set('Access-Control-Allow-Methods', 'POST')
+    response.headers.set(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    )
     return response
 }
