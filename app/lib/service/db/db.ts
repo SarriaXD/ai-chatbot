@@ -2,11 +2,7 @@ import { admin } from '@lib/service/config/firebase-admin-config.ts'
 
 const db = admin.firestore()
 
-export async function createChat(
-    userId: string,
-    title: string,
-    initialMessage: string
-) {
+export async function createChat(userId: string, initialMessage: string) {
     try {
         const chatRef = db
             .collection('users')
@@ -15,10 +11,8 @@ export async function createChat(
             .doc()
 
         const newChat = {
-            title,
-            messages: JSON.stringify([
-                { content: initialMessage, timestamp: new Date() },
-            ]),
+            messages: initialMessage,
+            newChat: true,
             createdAt: new Date(),
             updatedAt: new Date(),
         }
@@ -49,6 +43,7 @@ export async function updateChat(
 
         await conversationRef.set({
             messages,
+            newChat: false,
             updatedAt: new Date(),
         })
     } catch (error) {
