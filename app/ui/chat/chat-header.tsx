@@ -4,10 +4,12 @@ import { signOut } from 'firebase/auth'
 import useUser from '@lib/client/hooks/use-user.ts'
 import { Popover, PopoverContent, PopoverHandler } from '@ui/material.tsx'
 import { Menu, Pen, SignOut } from '@public/icons'
-import { useState } from 'react'
-import ChatSidebar from '@ui/chat/chat-sidebar.tsx'
 
-export default function ChatHeader() {
+export default function ChatHeader({
+    onClickSidebar,
+}: {
+    onClickSidebar: () => void
+}) {
     const { user } = useUser()
     const router = useRouter()
     const handleSignIn = () => {
@@ -23,18 +25,13 @@ export default function ChatHeader() {
     const handleSignUp = () => {
         router.push('/sign-up')
     }
-    const [open, setOpen] = useState(false)
     return (
         <>
             <div className="flex items-center justify-between px-4 py-3">
                 <div className={'flex items-center justify-center gap-4'}>
                     <button
                         className="size-8 rounded p-1 hover:bg-gray-800"
-                        onClick={() =>
-                            setOpen((open) => {
-                                return !open
-                            })
-                        }
+                        onClick={onClickSidebar}
                     >
                         <Menu className="size-full transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
                     </button>
@@ -98,7 +95,6 @@ export default function ChatHeader() {
                     </Popover>
                 )}
             </div>
-            <ChatSidebar open={open} onClose={() => setOpen(false)} />
         </>
     )
 }
