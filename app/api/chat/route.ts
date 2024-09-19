@@ -6,8 +6,6 @@ import {
 } from '@lib/service/utils/search-utils.ts'
 import { openai } from '@ai-sdk/openai'
 import getWeatherData from '@lib/service/utils/weather-utils.ts'
-import { validateAndDecodeToken } from '@lib/service/utils/validate-token-utils.ts'
-import { NextResponse } from 'next/server'
 import { getWhoAmI } from '@lib/service/utils/who-am-I-utils.ts'
 
 export const maxDuration = 30
@@ -29,10 +27,6 @@ const systemPrompt = (currentDate: string) => {
 const model = openai('gpt-4o-mini')
 
 export async function POST(request: Request) {
-    const decodedToken = await validateAndDecodeToken(request)
-    if (!decodedToken) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
     const { messages } = await request.json()
     const result = await streamText({
         model: model,
