@@ -9,9 +9,10 @@ import useChatFiles from '@lib/client/hooks/chat/use-chat-files.ts'
 import { useThrottle } from '@uidotdev/usehooks'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Add } from '@public/icons'
-import ChatHeader from '@ui/chat/chat-header.tsx'
 import { fetchWithToken } from '@lib/client/fetch-with-token.ts'
 import { toast } from 'react-toastify'
+import { Message } from 'ai'
+import { v4 as uuidv4 } from 'uuid'
 
 export type HandleSubmit = (
     event?: {
@@ -63,7 +64,15 @@ const DragZoneOverlay = ({ isDragActive }: { isDragActive: boolean }) => {
     )
 }
 
-const Chat = () => {
+const Chat = ({
+    initialMessages,
+    onSaveHistories,
+    onCreateNewChat,
+}: {
+    initialMessages?: Message[]
+    onSaveHistories?: (messages: Message[]) => void
+    onCreateNewChat?: (message: string) => Promise<void>
+}) => {
     const {
         messages: fasterMessages,
         input,
@@ -72,14 +81,34 @@ const Chat = () => {
         setInput,
         stop,
     } = useChat({
+        id: 'chat',
         fetch: fetchWithToken,
+        initialMessages,
         onError: () => {
             toast.error("something went wrong, we're working on it")
         },
         keepLastMessageOnError: true,
+        onFinish: () => onSaveHistories && onSaveHistories(messages),
     })
 
     const messages = useThrottle(fasterMessages, 16.67)
+    const handleSubmitWrapper: HandleSubmit = async (
+        event,
+        chatRequestOptions
+    ) => {
+        handleSubmit(event, chatRequestOptions)
+        if (messages.length === 0 && onCreateNewChat) {
+            await onCreateNewChat(
+                JSON.stringify([
+                    {
+                        id: uuidv4(),
+                        role: 'user',
+                        content: input,
+                    },
+                ])
+            )
+        }
+    }
 
     const {
         getRootProps,
@@ -90,21 +119,20 @@ const Chat = () => {
         onFilesLoad,
         onFileRemove,
         onSubmitWithImages,
-    } = useChatFiles(handleSubmit)
+    } = useChatFiles(handleSubmitWrapper)
 
     const { scrollRef } = useChatScroll(messages, isLoading)
 
     return (
-        <div
-            {...getRootProps({
-                className: 'flex size-full flex-col',
-            })}
-        >
-            <ChatHeader />
-            <input {...getInputProps()} />
-            <DragZoneOverlay isDragActive={isDragActive} />
-            <div className="w-full flex-1 overflow-auto">
-                {messages && messages.length > 0 && (
+        <>
+            <main
+                {...getRootProps({
+                    className: 'flex-1 overflow-y-auto',
+                })}
+            >
+                <input {...getInputProps()} />
+                <DragZoneOverlay isDragActive={isDragActive} />
+                {messages && messages.length > 0 ? (
                     <div className="px-4">
                         <MessageList
                             messages={messages}
@@ -112,11 +140,10 @@ const Chat = () => {
                         />
                         <div ref={scrollRef} className="h-12 w-full" />
                     </div>
-                )}
-                {(!messages || messages.length === 0) && (
+                ) : (
                     <EmptyMessagePlaceholder />
                 )}
-            </div>
+            </main>
             <ChatPanel
                 value={input}
                 isLoading={isLoading}
@@ -128,7 +155,7 @@ const Chat = () => {
                 onMessageChange={setInput}
                 onStop={stop}
             />
-        </div>
+        </>
     )
 }
 
