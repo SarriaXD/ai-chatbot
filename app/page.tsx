@@ -1,38 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Chat from '@ui/chat/chat.tsx'
 import ChatSidebar from '@ui/chat/chat-sidebar.tsx'
 import useUser from '@lib/client/hooks/use-user.ts'
-import { createChat, saveHistories } from '@lib/client/data/fetch-chat.ts'
-import { Message } from 'ai'
-import { usePathname, useRouter } from 'next/navigation'
-import { toast } from 'react-toastify'
 import ChatHeader from '@ui/chat/chat-header.tsx'
+import { v4 as uuidv4 } from 'uuid'
+import { useRouter } from 'next/navigation'
 
 export default function Page() {
     const [open, setOpen] = useState(false)
     const { user } = useUser()
-    const path = usePathname()
-    const chatId = path.replace('/', '')
+    const chatId = useMemo(() => uuidv4(), [])
     const router = useRouter()
 
-    const handleCreateChat = async (message: string) => {
-        toast.error('Creating chat...')
+    const handleCreateChat = () => {
         if (!user) return
         try {
-            const response = await createChat(user.uid, message)
-            router.push(`/${response.id}`)
-        } catch (error) {
-            console.error(error)
-        }
-    }
-
-    const handleSaveHistories = async (messages: Message[]) => {
-        if (!user) return
-        try {
-            await saveHistories(user.uid, chatId, messages)
-            console.log('Histories saved')
+            router.push(`/${chatId}`)
         } catch (error) {
             console.error(error)
         }
@@ -44,8 +29,8 @@ export default function Page() {
             <div className="flex h-screen flex-1 flex-col overflow-hidden">
                 <ChatHeader onClickSidebar={() => setOpen(!open)} />
                 <Chat
+                    chatId={chatId}
                     onCreateNewChat={user ? handleCreateChat : undefined}
-                    onSaveHistories={user ? handleSaveHistories : undefined}
                 />
             </div>
         </div>

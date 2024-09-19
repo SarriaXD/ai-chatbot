@@ -12,7 +12,6 @@ import { Add } from '@public/icons'
 import { fetchWithToken } from '@lib/client/fetch-with-token.ts'
 import { toast } from 'react-toastify'
 import { Message } from 'ai'
-import { v4 as uuidv4 } from 'uuid'
 
 export type HandleSubmit = (
     event?: {
@@ -65,13 +64,15 @@ const DragZoneOverlay = ({ isDragActive }: { isDragActive: boolean }) => {
 }
 
 const Chat = ({
+    chatId,
     initialMessages,
     onSaveHistories,
     onCreateNewChat,
 }: {
+    chatId: string
     initialMessages?: Message[]
     onSaveHistories?: (messages: Message[]) => void
-    onCreateNewChat?: (message: string) => Promise<void>
+    onCreateNewChat?: () => void
 }) => {
     const {
         messages: fasterMessages,
@@ -81,7 +82,7 @@ const Chat = ({
         setInput,
         stop,
     } = useChat({
-        id: 'chat',
+        id: chatId,
         fetch: fetchWithToken,
         initialMessages,
         onError: () => {
@@ -91,6 +92,8 @@ const Chat = ({
         onFinish: () => onSaveHistories && onSaveHistories(messages),
     })
 
+    console.log('chatId', chatId)
+
     const messages = useThrottle(fasterMessages, 16.67)
     const handleSubmitWrapper: HandleSubmit = async (
         event,
@@ -98,15 +101,7 @@ const Chat = ({
     ) => {
         handleSubmit(event, chatRequestOptions)
         if (messages.length === 0 && onCreateNewChat) {
-            await onCreateNewChat(
-                JSON.stringify([
-                    {
-                        id: uuidv4(),
-                        role: 'user',
-                        content: input,
-                    },
-                ])
-            )
+            onCreateNewChat()
         }
     }
 
