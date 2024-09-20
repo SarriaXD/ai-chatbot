@@ -15,6 +15,7 @@ export async function POST(req: Request) {
     const input: {
         threadId: string | null;
         message: string;
+        data: any;
     } = await req.json()
 
     // Create a thread if needed
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
     // Add a message to the thread
     const createdMessage = await openai.beta.threads.messages.create(threadId, {
         role: 'user',
-        content: input.message,
+        content: parseMessage(input.message, input.data),
     })
 
     return AssistantResponse(
@@ -95,4 +96,23 @@ export async function POST(req: Request) {
             }
         },
     )
+}
+
+const parseMessage = (message: string, data: any) => {
+    const images = JSON.parse(data.images)
+    if (images && images.length > 0) {
+        const image_urls = images.map(
+            (image: any) => {
+                return {
+                    image_url: {
+                        url: image.url
+                    },
+                    type: 'image_url',
+                }
+            },
+        )
+        return [...image_urls, { type: 'text', text: message }]
+    } else {
+        return message
+    }
 }

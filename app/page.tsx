@@ -4,7 +4,7 @@ import {
     // useMemo,
     useState,
 } from 'react'
-// import Chat from '@ui/chat/chat.tsx'
+// import Chat from '@ui/chat/Assistant.tsx'
 import ChatSidebar from '@ui/chat/chat-sidebar.tsx'
 import useUser from '@lib/client/hooks/use-user.ts'
 import ChatHeader from '@ui/chat/chat-header.tsx'

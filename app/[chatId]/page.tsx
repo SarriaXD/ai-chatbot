@@ -1,7 +1,7 @@
 // 'use client'
 //
 // import React, { useState } from 'react'
-// import Chat from '@ui/chat/chat.tsx'
+// import Chat from '@ui/chat/Assistant.tsx'
 // import ChatHeader from '@ui/chat/chat-header.tsx'
 // import { usePathname } from 'next/navigation'
 //
