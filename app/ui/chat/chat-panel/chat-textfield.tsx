@@ -10,8 +10,8 @@ interface ChatTextFieldProps {
     onFileRemove: (name: string, url: string) => void
     onOpenFile: () => void
     onMessageChange: (message: string) => void
-    onSubmit: (event: FormEvent) => void
-    onStop: (e: FormEvent) => void
+    onSubmit: (event: FormEvent<HTMLFormElement>) => void
+    onStop: () => void
 }
 
 export interface FilesState {
@@ -72,8 +72,8 @@ interface InnerTextfieldProps {
     onFileRemove: (name: string, url: string) => void
     onMessageChange: (message: string) => void
     onOpenFile: () => void
-    onSubmit: (event: FormEvent) => void
-    onStop: (e: FormEvent) => void
+    onSubmit: (event: FormEvent<HTMLFormElement>) => void
+    onStop: () => void
 }
 
 const InnerTextfield = ({

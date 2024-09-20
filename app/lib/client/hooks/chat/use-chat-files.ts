@@ -159,7 +159,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
     )
 
     const onSubmitWithFiles = useCallback(
-        (event: FormEvent) => {
+        (event: FormEvent<HTMLFormElement>) => {
             try {
                 // check if some files are still uploading
                 const isSomeFilesUploading =
@@ -170,10 +170,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                     return
                 }
                 onSubmit(event, {
-                    experimental_attachments: [
-                        ...filesState.images,
-                        ...filesState.pdfs,
-                    ],
+                    data: {}
                 })
             } catch (e) {
                 toast.error("Can' sent message right now")
@@ -220,7 +217,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
         open,
         onFilesLoad,
         onFileRemove,
-        onSubmitWithImages: onSubmitWithFiles,
+        onSubmitWithFiles,
     }
 }
 

@@ -9,8 +9,8 @@ interface ChatPanelProps {
     onFileRemove: (name: string, url: string) => void
     open: () => void
     onMessageChange: (message: string) => void
-    onSubmit: (event: FormEvent) => void
-    onStop: (e: FormEvent) => void
+    onSubmit: (event: FormEvent<HTMLFormElement>) => void
+    onStop: () => void
 }
 
 const ChatPanel = ({

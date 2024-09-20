@@ -29,8 +29,9 @@ const API_BASE_URL = 'https://api.weatherapi.com/v1'
 
 async function getWeatherData(
     city: string,
-    language: 'en' | 'zh'
+    language?: string
 ): Promise<WeatherData> {
+    const enOrZh = language === 'zh' ? 'zh' : 'en'
     try {
         const response = await fetch(
             `${API_BASE_URL}/forecast.json?key=${API_KEY}&q=${city}&days=7`
@@ -51,7 +52,7 @@ async function getWeatherData(
             current: data.current,
             forecast: {
                 forecastday: data.forecast.forecastday.map((day) => ({
-                    date: formatDate(new Date(day.date), language),
+                    date: formatDate(new Date(day.date), enOrZh),
                     day: {
                         maxtemp_c: day.day.maxtemp_c,
                         mintemp_c: day.day.mintemp_c,

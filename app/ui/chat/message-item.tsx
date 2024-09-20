@@ -35,7 +35,7 @@ const MessageItem = (props: MessageProps) => {
 
 const UserItem = ({ message }: MessageProps) => {
     const imageAttachments = message.experimental_attachments?.filter(
-        (attachment) => attachment?.contentType?.startsWith('image/')
+        (attachment) => attachment?.contentType?.startsWith('image/'),
     )
     return (
         <div className="flex flex-col gap-4">
@@ -167,9 +167,9 @@ const WeatherInformationItem = ({ toolInvocation }: ToolcallItemProps) => {
 }
 
 const WeatherIcon = ({
-    localtime,
-    weatherCondition,
-}: {
+                         localtime,
+                         weatherCondition,
+                     }: {
     localtime: Date
     weatherCondition: string
 }) => {

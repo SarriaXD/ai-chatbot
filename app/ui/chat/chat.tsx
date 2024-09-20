@@ -1,7 +1,7 @@
 'use client'
 
 import MessageList from './message-list.tsx'
-import { useChat } from 'ai/react'
+import { useAssistant } from 'ai/react'
 import { useChatScroll } from '@lib/client/hooks/chat/use-chat-scroll.ts'
 import ChatPanel from './chat-panel/chat-panel.tsx'
 import EmptyMessagePlaceholder from './empty-message-placeholder.tsx'
@@ -11,19 +11,12 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Add } from '@public/icons'
 import { fetchWithToken } from '@lib/client/fetch-with-token.ts'
 import { toast } from 'react-toastify'
-import { Message } from 'ai'
+import { FormEvent } from 'react'
 
 export type HandleSubmit = (
-    event?: {
-        preventDefault?: () => void
+    event?: FormEvent<HTMLFormElement>, requestOptions?: {
+        data?: Record<string, string>;
     },
-    chatRequestOptions?: {
-        experimental_attachments?: Array<{
-            url: string
-            name: string
-            contentType: string
-        }>
-    }
 ) => void
 
 const DragZoneOverlay = ({ isDragActive }: { isDragActive: boolean }) => {
@@ -63,47 +56,23 @@ const DragZoneOverlay = ({ isDragActive }: { isDragActive: boolean }) => {
     )
 }
 
-const Chat = ({
-    chatId,
-    initialMessages,
-    onSaveHistories,
-    onCreateNewChat,
-}: {
-    chatId: string
-    initialMessages?: Message[]
-    onSaveHistories?: (messages: Message[]) => void
-    onCreateNewChat?: () => void
-}) => {
+const Chat = () => {
     const {
         messages: fasterMessages,
         input,
-        isLoading,
-        handleSubmit,
+        status,
+        submitMessage,
         setInput,
         stop,
-    } = useChat({
-        id: chatId,
+    } = useAssistant({
+        api: 'api/assistant',
         fetch: fetchWithToken,
-        initialMessages,
         onError: () => {
-            toast.error("something went wrong, we're working on it")
+            toast.error('something went wrong, we\'re working on it')
         },
-        keepLastMessageOnError: true,
-        onFinish: () => onSaveHistories && onSaveHistories(messages),
     })
 
-    console.log('chatId', chatId)
-
     const messages = useThrottle(fasterMessages, 16.67)
-    const handleSubmitWrapper: HandleSubmit = async (
-        event,
-        chatRequestOptions
-    ) => {
-        handleSubmit(event, chatRequestOptions)
-        if (messages.length === 0 && onCreateNewChat) {
-            onCreateNewChat()
-        }
-    }
 
     const {
         getRootProps,
@@ -113,10 +82,10 @@ const Chat = ({
         filesState,
         onFilesLoad,
         onFileRemove,
-        onSubmitWithImages,
-    } = useChatFiles(handleSubmitWrapper)
+        onSubmitWithFiles,
+    } = useChatFiles(submitMessage)
 
-    const { scrollRef } = useChatScroll(messages, isLoading)
+    const { scrollRef } = useChatScroll(messages, status === 'in_progress')
 
     return (
         <>
@@ -131,7 +100,7 @@ const Chat = ({
                     <div className="px-4">
                         <MessageList
                             messages={messages}
-                            isLoading={isLoading}
+                            isLoading={status === 'in_progress'}
                         />
                         <div ref={scrollRef} className="h-12 w-full" />
                     </div>
@@ -141,12 +110,12 @@ const Chat = ({
             </main>
             <ChatPanel
                 value={input}
-                isLoading={isLoading}
+                isLoading={status === 'in_progress'}
                 filesState={filesState}
                 onFilesLoad={onFilesLoad}
                 onFileRemove={onFileRemove}
                 open={open}
-                onSubmit={onSubmitWithImages}
+                onSubmit={onSubmitWithFiles}
                 onMessageChange={setInput}
                 onStop={stop}
             />
