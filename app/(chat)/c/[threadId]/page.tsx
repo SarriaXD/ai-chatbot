@@ -91,7 +91,7 @@ export default function Page() {
         <>
             <main
                 {...getRootProps({
-                    className: 'flex-1 overflow-y-auto focus:outline-none',
+                    className: 'flex-1 overflow-y-auto',
                 })}
             >
                 <input {...getInputProps()} />
