@@ -1,4 +1,4 @@
-import React, { FormEvent } from 'react'
+import React, { FormEvent, useEffect } from 'react'
 import { ArrowUp, FileUpload, Record } from '@public/icons'
 import FilesPreviewGallery from './files-preview-gallery.tsx'
 
@@ -89,6 +89,12 @@ const InnerTextfield = ({
     const isSomeFilesUploading = filesState.images.some(
         (image) => image.isUploading
     )
+    const inputRef = React.useRef<HTMLInputElement>(null)
+    useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current.focus()
+        }
+    }, [])
     return (
         <form
             className="flex items-center gap-2 md:gap-4"
@@ -130,6 +136,7 @@ const InnerTextfield = ({
         >
             <FileUploadButton onClick={onOpenFile} />
             <input
+                ref={inputRef}
                 type="text"
                 value={value}
                 onChange={(e) => onMessageChange(e.target.value)}

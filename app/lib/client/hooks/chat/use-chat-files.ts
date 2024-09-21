@@ -1,9 +1,20 @@
 import { FormEvent, useCallback, useState } from 'react'
 import { FilesState } from '@ui/chat/chat-panel/chat-textfield.tsx'
 import { toast } from 'react-toastify'
-import { useDropzone } from 'react-dropzone'
-import { HandleSubmit } from '@ui/chat/chat.tsx'
 import { upload } from '@vercel/blob/client'
+import { useDropzone } from 'react-dropzone'
+
+export type HandleSubmit = (
+    event?: FormEvent<HTMLFormElement>,
+    requestOptions?: {
+        data?: Record<string, string>
+        experimental_attachments?: Array<{
+            url: string
+            name: string
+            contentType: string
+        }>
+    }
+) => void
 
 const useChatFiles = (onSubmit: HandleSubmit) => {
     const [filesState, setFilesState] = useState<FilesState>({
@@ -23,7 +34,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                 ]
                 if (
                     acceptedFiles.some(
-                        (file) => !allowedContentTypes.includes(file.type),
+                        (file) => !allowedContentTypes.includes(file.type)
                     )
                 ) {
                     toast.error('Currently only images are allowed')
@@ -31,7 +42,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                 }
                 // filter out files that are already uploaded
                 const beforeFileNames = filesState.images.map(
-                    (image) => image.name,
+                    (image) => image.name
                 )
                 const filteredFiles = acceptedFiles.filter((file) => {
                     return !beforeFileNames.includes(file.name)
@@ -53,7 +64,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                             ...before.images,
                             ...filteredFiles
                                 .filter((file) =>
-                                    file.type.startsWith('image/'),
+                                    file.type.startsWith('image/')
                                 )
                                 .map((file) => {
                                     return {
@@ -69,7 +80,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                             ...before.pdfs,
                             ...filteredFiles
                                 .filter(
-                                    (file) => file.type === 'application/pdf',
+                                    (file) => file.type === 'application/pdf'
                                 )
                                 .map((file) => {
                                     return {
@@ -89,7 +100,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                         upload(file.name, file, {
                             access: 'public',
                             handleUploadUrl: '/api/chat/upload',
-                        }),
+                        })
                     )
                 // upload the pdfs to server
                 const pdfsPromises = filteredFiles
@@ -98,7 +109,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                         upload(file.name, file, {
                             access: 'public',
                             handleUploadUrl: '/api/chat/upload',
-                        }),
+                        })
                     )
                 const results = await Promise.all([
                     ...imagesPromises,
@@ -108,7 +119,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                 setFilesState((before) => {
                     const images = before.images.map((image) => {
                         const result = results.find(
-                            (result) => result.pathname === image.name,
+                            (result) => result.pathname === image.name
                         )
                         if (result) {
                             return {
@@ -122,7 +133,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                     })
                     const pdfs = before.pdfs.map((pdf) => {
                         const result = results.find(
-                            (result) => result.pathname === pdf.name,
+                            (result) => result.pathname === pdf.name
                         )
                         if (result) {
                             return {
@@ -146,16 +157,16 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                 setFilesState((before) => {
                     return {
                         images: before.images.filter(
-                            (image) => !image.isUploading && image.url !== '',
+                            (image) => !image.isUploading && image.url !== ''
                         ),
                         pdfs: before.pdfs.filter(
-                            (pdf) => !pdf.isUploading && pdf.url !== '',
+                            (pdf) => !pdf.isUploading && pdf.url !== ''
                         ),
                     }
                 })
             }
         },
-        [filesState],
+        [filesState]
     )
 
     const onSubmitWithFiles = useCallback(
@@ -174,9 +185,13 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                         images: JSON.stringify(filesState.images),
                         pdfs: JSON.stringify(filesState.pdfs),
                     },
+                    experimental_attachments: [
+                        ...filesState.images,
+                        ...filesState.pdfs,
+                    ],
                 })
             } catch (e) {
-                toast.error('Can\' sent message right now')
+                toast.error("Can' sent message right now")
             } finally {
                 setFilesState(() => {
                     return {
@@ -186,7 +201,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                 })
             }
         },
-        [filesState, onSubmit],
+        [filesState, onSubmit]
     )
 
     const onFileRemove = useCallback(async (name: string, url: string) => {
@@ -194,7 +209,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
             setFilesState((before) => {
                 return {
                     images: before.images.filter(
-                        (image) => image.name !== name,
+                        (image) => image.name !== name
                     ),
                     pdfs: before.pdfs.filter((pdf) => pdf.name !== name),
                 }

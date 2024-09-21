@@ -1,38 +1,12 @@
 import { admin } from '@lib/service/config/firebase-admin-config.ts'
+import { Message } from 'ai'
 
 const db = admin.firestore()
-
-export async function createChat(userId: string, initialMessage: string) {
-    try {
-        const chatRef = db
-            .collection('users')
-            .doc(userId)
-            .collection('chats')
-            .doc()
-
-        const newChat = {
-            messages: initialMessage,
-            newChat: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        }
-
-        await chatRef.set(newChat)
-
-        return {
-            id: chatRef.id,
-            ...newChat,
-        }
-    } catch (error) {
-        console.error('Error in createChat:', error)
-        throw error
-    }
-}
 
 export async function updateChat(
     userId: string,
     chatId: string,
-    messages: string
+    messages: Message[]
 ) {
     try {
         const conversationRef = db
@@ -43,7 +17,6 @@ export async function updateChat(
 
         await conversationRef.set({
             messages,
-            newChat: false,
             updatedAt: new Date(),
         })
     } catch (error) {

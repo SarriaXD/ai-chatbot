@@ -1,7 +1,10 @@
 import { AssistantResponse } from 'ai'
 import OpenAI from 'openai'
 import getWeatherData from '@lib/service/utils/weather-utils.ts'
-import { retrieveSearch, tavilySearch } from '@lib/service/utils/search-utils.ts'
+import {
+    retrieveSearch,
+    tavilySearch,
+} from '@lib/service/utils/search-utils.ts'
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY || '',
@@ -9,13 +12,14 @@ const openai = new OpenAI({
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30
+export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
     // Parse the request body
     const input: {
-        threadId: string | null;
-        message: string;
-        data: any;
+        threadId: string | null
+        message: string
+        data?: any
     } = await req.json()
 
     // Create a thread if needed
@@ -32,8 +36,7 @@ export async function POST(req: Request) {
         async ({ forwardStream, sendDataMessage }) => {
             // Run the assistant on the thread
             const runStream = openai.beta.threads.runs.stream(threadId, {
-                assistant_id:
-                    'asst_A6raLiYj0qNbIqlKNRzCRePj',
+                assistant_id: 'asst_A6raLiYj0qNbIqlKNRzCRePj',
             })
 
             // forward run status would stream message deltas
@@ -43,11 +46,13 @@ export async function POST(req: Request) {
             while (
                 runResult?.status === 'requires_action' &&
                 runResult.required_action?.type === 'submit_tool_outputs'
-                ) {
+            ) {
                 const tool_outputs_promises =
                     runResult.required_action.submit_tool_outputs.tool_calls.map(
                         async (toolCall: any) => {
-                            const parameters = JSON.parse(toolCall.function.arguments)
+                            const parameters = JSON.parse(
+                                toolCall.function.arguments
+                            )
                             let tool_output
                             switch (toolCall.function.name) {
                                 // configure your tool calls here
@@ -56,7 +61,10 @@ export async function POST(req: Request) {
                                         role: 'data',
                                         data: 'getting weather data',
                                     })
-                                    tool_output = await getWeatherData(parameters.city, parameters.language)
+                                    tool_output = await getWeatherData(
+                                        parameters.city,
+                                        parameters.language
+                                    )
                                     sendDataMessage({
                                         role: 'data',
                                         data: JSON.stringify(tool_output),
@@ -66,23 +74,25 @@ export async function POST(req: Request) {
                                         output: JSON.stringify(tool_output),
                                     }
                                 case 'search':
-                                    console.log('search', parameters)
                                     return {
                                         tool_call_id: toolCall.id,
-                                        output: JSON.stringify(await tavilySearch(parameters.query)),
+                                        output: JSON.stringify(
+                                            await tavilySearch(parameters.query)
+                                        ),
                                     }
                                 case 'retrieve':
-                                    console.log('retrieve', parameters)
                                     return {
                                         tool_call_id: toolCall.id,
-                                        output: JSON.stringify(await retrieveSearch(parameters.url)),
+                                        output: JSON.stringify(
+                                            await retrieveSearch(parameters.url)
+                                        ),
                                     }
                                 default:
                                     throw new Error(
-                                        `Unknown tool call function: ${toolCall.function.name}`,
+                                        `Unknown tool call function: ${toolCall.function.name}`
                                     )
                             }
-                        },
+                        }
                     )
                 const tool_outputs = await Promise.all(tool_outputs_promises)
 
@@ -90,27 +100,28 @@ export async function POST(req: Request) {
                     openai.beta.threads.runs.submitToolOutputsStream(
                         threadId,
                         runResult.id,
-                        { tool_outputs },
-                    ),
+                        { tool_outputs }
+                    )
                 )
             }
-        },
+        }
     )
 }
 
-const parseMessage = (message: string, data: any) => {
+const parseMessage = (message: string, data?: any) => {
+    if (!data) {
+        return message
+    }
     const images = JSON.parse(data.images)
     if (images && images.length > 0) {
-        const image_urls = images.map(
-            (image: any) => {
-                return {
-                    image_url: {
-                        url: image.url
-                    },
-                    type: 'image_url',
-                }
-            },
-        )
+        const image_urls = images.map((image: any) => {
+            return {
+                image_url: {
+                    url: image.url,
+                },
+                type: 'image_url',
+            }
+        })
         return [...image_urls, { type: 'text', text: message }]
     } else {
         return message

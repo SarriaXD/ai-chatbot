@@ -8,10 +8,10 @@ import { auth } from '@lib/client/config/firebase-config.ts'
 import { AuthError } from 'firebase/auth'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
-import useUser from '@lib/client/hooks/use-user.ts'
+import { useAuth } from '@lib/client/user-provider.tsx'
 
 export const useSignIn = () => {
-    const { user } = useUser()
+    const { user } = useAuth()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<AuthError | null>(null)
     const router = useRouter()

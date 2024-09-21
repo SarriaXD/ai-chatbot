@@ -1,16 +1,16 @@
 import { auth } from '@lib/client/config/firebase-config.ts'
 import { useRouter } from 'next/navigation'
 import { signOut } from 'firebase/auth'
-import useUser from '@lib/client/hooks/use-user.ts'
 import { Popover, PopoverContent, PopoverHandler } from '@ui/material.tsx'
 import { Menu, Pen, SignOut } from '@public/icons'
+import { useAuth } from '@lib/client/user-provider.tsx'
 
 export default function ChatHeader({
     onClickSidebar,
 }: {
     onClickSidebar: () => void
 }) {
-    const { user } = useUser()
+    const { user } = useAuth()
     const router = useRouter()
     const handleSignIn = () => {
         router.push('/sign-in')
