@@ -25,30 +25,15 @@ const fetchHistory = async (chatId: string) => {
     return await result.json()
 }
 
-// const fetchHistories = async (
-//     pageSize: number,
-//     pageNumber: number = 1
-// ): Promise<{ chatId: string; updatedA: Timestamp; title?: string }[]> => {
-//     const queryParams = new URLSearchParams({
-//         pageSize: pageSize.toString(),
-//         pageNumber: pageNumber.toString(),
-//     })
-//     const url = `/api/assistant/histories?${queryParams.toString()}`
-//
-//     const result = await fetchWithToken(url, {
-//         method: 'GET',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//     })
-//     return result.json()
-// }
-
 const listenHistories = (
     userId: string,
     pageSize: number = 20,
     onHistoriesChange: (
-        histories: { id: string; title: string; updatedAt: Date }[]
+        histories: {
+            chatId: string
+            title?: string
+            updatedAt: Date
+        }[]
     ) => void,
     onError: (error: Error) => void
 ) => {
@@ -57,7 +42,7 @@ const listenHistories = (
             fromFirestore: (snapshot, options) => {
                 const data = snapshot.data(options)
                 return {
-                    id: snapshot.id,
+                    chatId: snapshot.id,
                     title: data.title,
                     updatedAt: data.updatedAt?.toDate(),
                 }
@@ -73,6 +58,7 @@ const listenHistories = (
             onHistoriesChange(updatedChats)
         },
         (error) => {
+            console.log('Error fetching chat histories:', error)
             onError(error)
         }
     )

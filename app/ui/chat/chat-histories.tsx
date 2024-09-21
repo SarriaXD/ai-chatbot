@@ -1,5 +1,8 @@
 import { Close, Menu } from '@public/icons'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { chatApiClient } from '@lib/client/data/chat-api-client.ts'
+import { useAuth } from '@lib/client/hooks/use-auth.ts'
+import { toast } from 'react-toastify'
 
 const ChatHistories = ({ onClose }: { onClose: () => void }) => {
     const topItems = [
@@ -11,18 +14,30 @@ const ChatHistories = ({ onClose }: { onClose: () => void }) => {
         { icon: '🎨', name: 'DALL·E' },
         { icon: '🔍', name: 'Explore GPTs' },
     ]
-
-    const recentItems = [
-        { name: '今夕年份查询', category: 'Today' },
-        { name: '获取Firebase头像URL', category: 'Yesterday' },
-        { name: 'KNN Exam Review', category: 'Previous 7 Days' },
-        { name: 'KNN算法介绍', category: 'Previous 7 Days' },
-        { name: '台湾冲突防阻法案', category: 'Previous 7 Days' },
-        { name: '工签配偶陪同情况', category: 'Previous 7 Days' },
-        { name: '使用 React Suspense', category: 'Previous 7 Days' },
-        { name: 'React Suspense Overview', category: 'Previous 7 Days' },
-        { name: '问候与帮助', category: 'Previous 7 Days' },
-    ]
+    const [histories, setHistories] = React.useState<
+        {
+            chatId: string
+            title?: string
+            updatedAt: Date
+        }[]
+    >([])
+    const { user } = useAuth()
+    useEffect(() => {
+        let unsubscribe = () => {}
+        if (user) {
+            unsubscribe = chatApiClient.listenHistories(
+                user.uid,
+                20,
+                (histories) => {
+                    setHistories(histories)
+                },
+                () => {
+                    toast.error('Failed to fetch chat histories')
+                }
+            )
+        }
+        return unsubscribe
+    }, [user])
     return (
         <div className="flex h-screen w-64 flex-col bg-[#171717] text-gray-300">
             <div className="flex items-center justify-between px-4 py-3">
@@ -62,18 +77,14 @@ const ChatHistories = ({ onClose }: { onClose: () => void }) => {
                                     {category}
                                 </h3>
                                 <ul className="space-y-1">
-                                    {recentItems
-                                        .filter(
-                                            (item) => item.category === category
-                                        )
-                                        .map((item, index) => (
-                                            <li
-                                                key={index}
-                                                className="cursor-pointer rounded p-2 text-[14px] font-normal hover:bg-gray-800"
-                                            >
-                                                {item.name}
-                                            </li>
-                                        ))}
+                                    {histories.map((item, index) => (
+                                        <li
+                                            key={index}
+                                            className="cursor-pointer rounded p-2 text-[14px] font-normal hover:bg-gray-800"
+                                        >
+                                            {item.title ?? 'New Chat'}
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
                         )
