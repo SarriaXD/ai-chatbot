@@ -3,7 +3,7 @@
 import ChatSidebar from '@ui/chat/chat-sidebar.tsx'
 import ChatHeader from '@ui/chat/chat-header.tsx'
 import React, { useState } from 'react'
-import { useAuth } from '@lib/client/user-provider.tsx'
+import { useAuth } from '@lib/client/hooks/use-auth.ts'
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
     const { user } = useAuth()

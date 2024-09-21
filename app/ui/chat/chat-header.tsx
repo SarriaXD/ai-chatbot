@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { signOut } from 'firebase/auth'
 import { Popover, PopoverContent, PopoverHandler } from '@ui/material.tsx'
 import { Menu, Pen, SignOut } from '@public/icons'
-import { useAuth } from '@lib/client/user-provider.tsx'
+import { useAuth } from '@lib/client/hooks/use-auth.ts'
 
 export default function ChatHeader({
     onClickSidebar,

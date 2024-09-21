@@ -10,9 +10,9 @@ import EmptyMessagePlaceholder from '@ui/chat/empty-message-placeholder.tsx'
 import ChatPanel from '@ui/chat/chat-panel/chat-panel.tsx'
 import useChatScroll from '@lib/client/hooks/chat/use-chat-scroll.ts'
 import DragZoneOverlay from '@ui/chat/drag-zone-overlay.tsx'
-import { useAuth } from '@lib/client/user-provider.tsx'
 import { useEffect } from 'react'
 import useSaveChatHistoryEffect from '@lib/client/hooks/chat/use-save-chat-history-effect.ts'
+import { useAuth } from '@lib/client/hooks/use-auth.ts'
 
 export default function Page() {
     const { user } = useAuth()

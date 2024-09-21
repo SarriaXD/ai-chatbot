@@ -1,17 +1,20 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 import { User } from 'firebase/auth'
 import { auth } from '@lib/client/config/firebase-config.ts'
 
-const AuthContext = createContext<{ user: User | null; loading: boolean }>({
+export const AuthContext = createContext<{
+    user: User | null
+    loading: boolean
+}>({
     user: null,
     loading: true,
 })
 
-export const useAuth = () => useContext(AuthContext)
-
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+    children,
+}) => {
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
 
@@ -26,7 +29,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, [])
 
     return (
-        <AuthContext.Provider value={{ user, loading }}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={{ user, loading }}>
+            {children}
+        </AuthContext.Provider>
     )
-
 }
