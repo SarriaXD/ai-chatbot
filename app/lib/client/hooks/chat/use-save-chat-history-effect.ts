@@ -8,13 +8,11 @@ import { Message } from 'ai'
 const useSaveChatHistoryEffect = ({
     user,
     chatId,
-    title,
     messages,
     status,
 }: {
     user: User | null
     chatId?: string
-    title?: string
     messages: Message[]
     status: 'in_progress' | 'awaiting_message'
 }) => {
@@ -29,13 +27,12 @@ const useSaveChatHistoryEffect = ({
                 .saveHistories({
                     chatId,
                     messages,
-                    title,
                 })
                 .catch(() => {
                     toast.error("something went wrong, we're working on it")
                 })
         }
-    }, [messages, chatId, user, status, title])
+    }, [messages, chatId, user, status])
 }
 
 export default useSaveChatHistoryEffect

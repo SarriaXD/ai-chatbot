@@ -1,13 +1,49 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ChatHistories from '@ui/chat/chat-histories.tsx'
+import { usePathname } from 'next/navigation'
+import { useAuth } from '@lib/client/hooks/use-auth.ts'
+import { chatApiClient } from '@lib/client/data/chat-api-client.ts'
+import { toast } from 'react-toastify'
 
 interface ChatSidebarProps {
     open: boolean
     onClose: () => void
 }
 
+const useChatHistories = () => {
+    const path = usePathname()
+    const match = path.match(/c\/(.+)$/)
+    const currentChatId = match ? match[1] : undefined
+    const [histories, setHistories] = React.useState<
+        {
+            chatId: string
+            title?: string
+            updatedAt: Date
+        }[]
+    >([])
+    const { user } = useAuth()
+    useEffect(() => {
+        let unsubscribe = () => {}
+        if (user) {
+            unsubscribe = chatApiClient.listenHistories(
+                user.uid,
+                20,
+                (histories) => {
+                    setHistories(histories)
+                },
+                () => {
+                    toast.error('Failed to fetch chat histories')
+                }
+            )
+        }
+        return unsubscribe
+    }, [user])
+    return { histories, currentChatId }
+}
+
 const ChatSidebar = ({ open, onClose }: ChatSidebarProps) => {
+    const { histories, currentChatId } = useChatHistories()
     return (
         <AnimatePresence mode="wait">
             {open && (
@@ -45,7 +81,11 @@ const ChatSidebar = ({ open, onClose }: ChatSidebarProps) => {
                                 duration: 0.6,
                             }}
                         >
-                            <ChatHistories onClose={onClose} />
+                            <ChatHistories
+                                histories={histories}
+                                currentChatId={currentChatId}
+                                onClose={onClose}
+                            />
                         </motion.div>
                     </motion.div>
                 </motion.div>

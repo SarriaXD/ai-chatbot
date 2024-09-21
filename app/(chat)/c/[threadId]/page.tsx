@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useAssistant } from 'ai/react'
 import { fetchWithToken } from '@lib/client/fetch-with-token.ts'
 import { toast } from 'react-toastify'
@@ -35,8 +35,6 @@ export default function Page() {
         },
     })
 
-    const [title, setTitle] = useState<string | undefined>()
-
     useEffect(() => {
         if (userLoading) {
             return
@@ -48,7 +46,6 @@ export default function Page() {
             const fetchData = async () => {
                 const data = await chatApiClient.fetchHistory(threadId)
                 setMessages(data.messages ?? [])
-                setTitle(data.title)
             }
             fetchData().catch(() => {
                 toast.error('unable to fetch history data')
@@ -62,7 +59,6 @@ export default function Page() {
     useSaveChatHistoryEffect({
         user,
         chatId: threadId,
-        title,
         messages,
         status,
     })

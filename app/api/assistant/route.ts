@@ -5,6 +5,8 @@ import {
     retrieveSearch,
     tavilySearch,
 } from '@lib/service/utils/search-utils.ts'
+import { updateChat } from '@lib/service/db/db.ts'
+import { validateAndDecodeToken } from '@lib/service/utils/validate-token-utils.ts'
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY || '',
@@ -23,7 +25,20 @@ export async function POST(req: Request) {
     } = await req.json()
 
     // Create a thread if needed
-    const threadId = input.threadId ?? (await openai.beta.threads.create({})).id
+    let threadId: string
+    if (input.threadId) {
+        threadId = input.threadId
+    } else {
+        // if no threadId is provided, create a new thread
+        const thread = await openai.beta.threads.create({})
+        threadId = thread.id
+        // if user authenticated, save the threadId to the user's chat history
+        const token = await validateAndDecodeToken(req)
+        if (token) {
+            const userId = token.uid
+            await updateChat(userId, threadId, [])
+        }
+    }
 
     // Add a message to the thread
     const createdMessage = await openai.beta.threads.messages.create(threadId, {

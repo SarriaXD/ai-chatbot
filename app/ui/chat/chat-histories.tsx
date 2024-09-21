@@ -1,10 +1,20 @@
 import { Close, Menu } from '@public/icons'
-import React, { useEffect } from 'react'
-import { chatApiClient } from '@lib/client/data/chat-api-client.ts'
-import { useAuth } from '@lib/client/hooks/use-auth.ts'
-import { toast } from 'react-toastify'
 
-const ChatHistories = ({ onClose }: { onClose: () => void }) => {
+interface ChatHistoriesProps {
+    histories: {
+        chatId: string
+        title?: string
+        updatedAt: Date
+    }[]
+    currentChatId?: string
+    onClose: () => void
+}
+
+const ChatHistories = ({
+    histories,
+    currentChatId,
+    onClose,
+}: ChatHistoriesProps) => {
     const topItems = [
         { icon: '🌀', name: 'ChatGPT' },
         { icon: '🧠', name: 'Data Sage' },
@@ -14,30 +24,6 @@ const ChatHistories = ({ onClose }: { onClose: () => void }) => {
         { icon: '🎨', name: 'DALL·E' },
         { icon: '🔍', name: 'Explore GPTs' },
     ]
-    const [histories, setHistories] = React.useState<
-        {
-            chatId: string
-            title?: string
-            updatedAt: Date
-        }[]
-    >([])
-    const { user } = useAuth()
-    useEffect(() => {
-        let unsubscribe = () => {}
-        if (user) {
-            unsubscribe = chatApiClient.listenHistories(
-                user.uid,
-                20,
-                (histories) => {
-                    setHistories(histories)
-                },
-                () => {
-                    toast.error('Failed to fetch chat histories')
-                }
-            )
-        }
-        return unsubscribe
-    }, [user])
     return (
         <div className="flex h-screen w-64 flex-col bg-[#171717] text-gray-300">
             <div className="flex items-center justify-between px-4 py-3">
@@ -77,14 +63,20 @@ const ChatHistories = ({ onClose }: { onClose: () => void }) => {
                                     {category}
                                 </h3>
                                 <ul className="space-y-1">
-                                    {histories.map((item, index) => (
-                                        <li
-                                            key={index}
-                                            className="cursor-pointer rounded p-2 text-[14px] font-normal hover:bg-gray-800"
-                                        >
-                                            {item.title ?? 'New Chat'}
-                                        </li>
-                                    ))}
+                                    {histories.map((item, index) => {
+                                        const bgColor =
+                                            item.chatId === currentChatId
+                                                ? 'bg-gray-800'
+                                                : ''
+                                        return (
+                                            <li
+                                                key={index}
+                                                className={`cursor-pointer rounded p-2 text-[14px] font-normal hover:bg-gray-800 ${bgColor}`}
+                                            >
+                                                {item.title ?? 'New Chat'}
+                                            </li>
+                                        )
+                                    })}
                                 </ul>
                             </div>
                         )

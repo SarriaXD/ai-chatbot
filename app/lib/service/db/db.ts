@@ -16,11 +16,24 @@ export async function updateChat(
             .collection('chats')
             .doc(chatId)
 
-        await conversationRef.set({
-            messages,
-            title,
-            updatedAt: new Date(),
-        })
+        if (title) {
+            await conversationRef.set(
+                {
+                    messages,
+                    title,
+                    updatedAt: new Date(),
+                },
+                { merge: true }
+            )
+        } else {
+            await conversationRef.set(
+                {
+                    messages,
+                    updatedAt: new Date(),
+                },
+                { merge: true }
+            )
+        }
     } catch (error) {
         console.error('Error in storeChat:', error)
         throw error
