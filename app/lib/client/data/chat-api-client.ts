@@ -10,17 +10,33 @@ import {
 import { db } from '@lib/client/config/firebase-config.ts'
 // import { Timestamp } from 'firebase/firestore'
 
-const saveHistories = async (chatId: string, messages: Message[]) => {
+const saveHistories = async ({
+    chatId,
+    messages,
+    title,
+}: {
+    chatId: string
+    messages: Message[]
+    title?: string
+}) => {
     return await fetchWithToken(`/api/assistant/histories`, {
         method: 'POST',
         body: JSON.stringify({
             chatId: chatId,
             messages,
+            title,
         }),
     })
 }
 
-const fetchHistory = async (chatId: string) => {
+const fetchHistory = async (
+    chatId: string
+): Promise<{
+    chatId: string
+    title?: string
+    messages: Message[]
+    updatedAt: Date
+}> => {
     const result = await fetchWithToken(`/api/assistant/histories/${chatId}`)
     return await result.json()
 }
@@ -67,6 +83,5 @@ const listenHistories = (
 export const chatApiClient = {
     saveHistories,
     fetchHistory,
-    // fetchHistories,
     listenHistories,
 }

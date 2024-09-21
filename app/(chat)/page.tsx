@@ -36,7 +36,12 @@ export default function Page() {
     const messages = useThrottle(fasterMessages, 30)
 
     // save the user's chat history
-    useSaveChatHistoryEffect(user, threadId, messages, status)
+    useSaveChatHistoryEffect({
+        user,
+        chatId: threadId,
+        messages,
+        status,
+    })
 
     // Reload the page when the user navigates back to the chat
     useEffect(() => {
