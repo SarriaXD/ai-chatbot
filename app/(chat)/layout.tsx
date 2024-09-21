@@ -7,7 +7,7 @@ import { useAuth } from '@lib/client/hooks/use-auth.ts'
 import { useMediaQuery } from '@lib/client/hooks/use-media-query.ts'
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-    const { user } = useAuth()
+    const { user, loading } = useAuth()
     const [open, setOpen] = useState(false)
     const isMobile = useMediaQuery('(max-width: 735px)')
     useEffect(() => {
@@ -20,7 +20,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="flex size-full">
             {user && <ChatSidebar open={open} onClose={() => setOpen(false)} />}
             <div className="flex h-screen flex-1 flex-col overflow-hidden">
-                <ChatHeader onClickSidebar={() => setOpen(!open)} />
+                {!loading && (
+                    <ChatHeader onClickSidebar={() => setOpen(!open)} />
+                )}
                 {children}
             </div>
         </div>
