@@ -1,4 +1,5 @@
 import { Close, Menu } from '@public/icons'
+import Link from 'next/link'
 
 interface ChatHistoriesProps {
     histories: {
@@ -15,17 +16,8 @@ const ChatHistories = ({
     currentChatId,
     onClose,
 }: ChatHistoriesProps) => {
-    const topItems = [
-        { icon: '🌀', name: 'ChatGPT' },
-        { icon: '🧠', name: 'Data Sage' },
-        { icon: '📱', name: 'Flutter Expert' },
-        { icon: '🚀', name: 'Flutter' },
-        { icon: '🔮', name: 'NextJS Vercel AI SDK' },
-        { icon: '🎨', name: 'DALL·E' },
-        { icon: '🔍', name: 'Explore GPTs' },
-    ]
     return (
-        <div className="flex h-screen w-64 flex-col bg-[#171717] text-gray-300">
+        <div className="flex h-screen w-[276px] flex-col bg-[#171717] text-gray-300">
             <div className="flex items-center justify-between px-4 py-3">
                 <button
                     className="size-8 rounded p-1 hover:bg-gray-800"
@@ -42,45 +34,66 @@ const ChatHistories = ({
             </div>
             <div className={'flex-1 overflow-scroll'}>
                 <ul className="space-y-2 p-4">
-                    {topItems.map((item, index) => (
-                        <li
-                            key={index}
-                            className="flex cursor-pointer items-center space-x-3 rounded p-2 hover:bg-gray-800"
-                        >
-                            <span className="text-xl font-normal">
-                                {item.icon}
-                            </span>
-                            <span>{item.name}</span>
-                        </li>
-                    ))}
+                    {/*<li*/}
+                    {/*    className="flex cursor-pointer items-center space-x-3 rounded p-2 hover:bg-gray-800"*/}
+                    {/*>*/}
+                    {/*    <span className="text-xl font-normal">*/}
+                    {/*    */}
+                    {/*    </span>*/}
+                    {/*    <span>*/}
+                    {/*        */}
+                    {/*    </span>*/}
+                    {/*</li>*/}
                 </ul>
 
-                <div className="p-4">
-                    {['Today', 'Yesterday', 'Previous 7 Days'].map(
-                        (category) => (
-                            <div key={category} className="mb-4">
-                                <h3 className="text-sm p-2 font-semibold text-gray-500">
-                                    {category}
-                                </h3>
-                                <ul className="space-y-1">
-                                    {histories.map((item, index) => {
-                                        const bgColor =
-                                            item.chatId === currentChatId
-                                                ? 'bg-gray-800'
-                                                : ''
-                                        return (
-                                            <li
-                                                key={index}
-                                                className={`cursor-pointer rounded p-2 text-[14px] font-normal hover:bg-gray-800 ${bgColor}`}
+                <div className="p-2">
+                    <div className="mb-4">
+                        <ul>
+                            {histories.map((item, index) => {
+                                const bgColor =
+                                    item.chatId === currentChatId
+                                        ? 'bg-gray-900'
+                                        : ''
+                                const threeDotsVisibility =
+                                    item.chatId === currentChatId
+                                        ? '!visible'
+                                        : ''
+                                const threeDotsColor =
+                                    item.chatId === currentChatId
+                                        ? '!bg-gray-900'
+                                        : ''
+                                return (
+                                    <li key={index}>
+                                        <Link
+                                            href={`/c/${item.chatId}`}
+                                            className=""
+                                        >
+                                            <div
+                                                className={`group relative overflow-hidden whitespace-nowrap rounded-xl p-2 text-[16px] font-normal tracking-tight hover:bg-gray-900 ${bgColor}`}
                                             >
                                                 {item.title ?? 'New Chat'}
-                                            </li>
-                                        )
-                                    })}
-                                </ul>
-                            </div>
-                        )
-                    )}
+                                                <div
+                                                    className={`absolute inset-y-0 right-0 flex items-center justify-center bg-[#171717] group-hover:bg-gray-900 ${threeDotsColor}`}
+                                                    style={{
+                                                        maskImage:
+                                                            'linear-gradient(to left, black 60%, transparent)',
+                                                    }}
+                                                >
+                                                    <span
+                                                        className={`invisible flex h-full items-center justify-center gap-0.5 pl-6 pr-2 group-hover:visible ${threeDotsVisibility}`}
+                                                    >
+                                                        <span className="size-1 rounded-full bg-gray-400" />
+                                                        <span className="size-1 rounded-full bg-gray-400" />
+                                                        <span className="size-1 rounded-full bg-gray-400" />
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    </li>
+                                )
+                            })}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
