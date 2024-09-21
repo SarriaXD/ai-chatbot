@@ -25,8 +25,8 @@ export async function POST(request: Request) {
         }
 
         const userId = token.uid
-        if (messages.length === 2) {
-            const title = await getSummarizedTitle(messages)
+        if (messages.length <= 3) {
+            const title = await getSummarizedTitle(messages[0])
             await updateChat(userId, chatId, messages, title)
         } else {
             await updateChat(userId, chatId, messages)
@@ -49,11 +49,11 @@ export async function POST(request: Request) {
 }
 
 // Get a chat summary
-const getSummarizedTitle = async (messages: Message[], title?: string) => {
+const getSummarizedTitle = async (messages: Message, title?: string) => {
     if (title) return
     const { text } = await generateText({
         model: openai('gpt-4o-mini'),
-        prompt: `Summarize a title in one pure text sentence, without punctuation: ${JSON.stringify(messages.slice(0, 2))}`,
+        prompt: `Using one phrase to summarize a topic, Don't have any punctuation. here is the content: ${messages.content}`,
     })
     return text
 }

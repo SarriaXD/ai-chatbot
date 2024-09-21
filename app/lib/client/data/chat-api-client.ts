@@ -22,7 +22,7 @@ const saveHistories = async ({
     return await fetchWithToken(`/api/assistant/histories`, {
         method: 'POST',
         body: JSON.stringify({
-            chatId: chatId,
+            chatId,
             messages,
             title,
         }),
