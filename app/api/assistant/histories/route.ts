@@ -53,7 +53,7 @@ const getSummarizedTitle = async (messages: Message[], title?: string) => {
     if (title) return
     const { text } = await generateText({
         model: openai('gpt-4o-mini'),
-        prompt: `Using pure text to summarize a title in a short sentence: ${JSON.stringify(messages.slice(0, 2))}`,
+        prompt: `Summarize a title in one pure text sentence, without punctuation: ${JSON.stringify(messages.slice(0, 2))}`,
     })
     return text
 }
