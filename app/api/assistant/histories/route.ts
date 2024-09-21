@@ -1,6 +1,7 @@
 import { updateChat } from '@lib/service/db/db.ts'
 import { validateAndDecodeToken } from '@lib/service/utils/validate-token-utils.ts'
 
+// Save or update a chat conversation
 export async function POST(request: Request) {
     try {
         const { chatId, messages } = await request.json()

@@ -6,7 +6,8 @@ const db = admin.firestore()
 export async function updateChat(
     userId: string,
     chatId: string,
-    messages: Message[]
+    messages: Message[],
+    title?: string
 ) {
     try {
         const conversationRef = db
@@ -17,6 +18,7 @@ export async function updateChat(
 
         await conversationRef.set({
             messages,
+            title,
             updatedAt: new Date(),
         })
     } catch (error) {
@@ -62,7 +64,6 @@ export async function getChatsPaginated(
     }))
 
     const totalQuery = db.collection('users').doc(userId).collection('chats')
-
     const totalSnapshot = await totalQuery.count().get()
     const totalCount = totalSnapshot.data().count
 

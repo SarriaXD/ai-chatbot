@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { fetchWithToken } from '@lib/client/fetch-with-token.ts'
+import { chatApiClient } from '@lib/client/data/chat-api-client.ts'
 import { toast } from 'react-toastify'
 import { User } from 'firebase/auth'
 import { Message } from 'ai'
@@ -18,14 +18,7 @@ const useSaveChatHistoryEffect = (
             messages.length > 0 &&
             status === 'awaiting_message'
         ) {
-            const saveHistory = fetchWithToken(`/api/assistant/histories`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    chatId: threadId,
-                    messages,
-                }),
-            })
-            saveHistory.catch(() => {
+            chatApiClient.saveHistories(threadId, messages).catch(() => {
                 toast.error("something went wrong, we're working on it")
             })
         }

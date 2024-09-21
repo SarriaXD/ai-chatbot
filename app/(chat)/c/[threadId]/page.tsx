@@ -13,6 +13,7 @@ import DragZoneOverlay from '@ui/chat/drag-zone-overlay.tsx'
 import { notFound, usePathname } from 'next/navigation'
 import useSaveChatHistoryEffect from '@lib/client/hooks/chat/use-save-chat-history-effect.ts'
 import { useAuth } from '@lib/client/hooks/use-auth.ts'
+import { chatApiClient } from '@lib/client/data/chat-api-client.ts'
 
 export default function Page() {
     const threadId = usePathname().split('/').filter(Boolean).pop() || ''
@@ -43,10 +44,7 @@ export default function Page() {
         }
         if (user && threadId) {
             const fetchData = async () => {
-                const result = await fetchWithToken(
-                    `/api/assistant/histories/${threadId}`
-                )
-                const data = await result.json()
+                const data = await chatApiClient.fetchHistory(threadId)
                 setMessages(data.messages ?? [])
             }
             fetchData().catch(() => {

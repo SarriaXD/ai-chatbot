@@ -1,6 +1,7 @@
 import { validateAndDecodeToken } from '@lib/service/utils/validate-token-utils.ts'
 import { getChat } from '@lib/service/db/db.ts'
 
+// Get a chat conversation
 export async function GET(request: Request) {
     try {
         const token = await validateAndDecodeToken(request)
