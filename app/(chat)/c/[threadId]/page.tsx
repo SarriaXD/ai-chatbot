@@ -16,7 +16,7 @@ import { useAuth } from '@lib/client/hooks/use-auth.ts'
 
 export default function Page() {
     const threadId = usePathname().split('/').filter(Boolean).pop() || ''
-    const { user, loading: userloading } = useAuth()
+    const { user, loading: userLoading } = useAuth()
     const {
         messages: fasterMessages,
         input,
@@ -35,7 +35,7 @@ export default function Page() {
     })
 
     useEffect(() => {
-        if (userloading) {
+        if (userLoading) {
             return
         }
         if (!user) {
@@ -53,7 +53,7 @@ export default function Page() {
                 toast.error('unable to fetch history data')
             })
         }
-    }, [setMessages, threadId, user, userloading])
+    }, [setMessages, threadId, user, userLoading])
 
     const messages = useThrottle(fasterMessages, 30)
 
