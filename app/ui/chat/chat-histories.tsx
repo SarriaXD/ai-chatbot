@@ -1,5 +1,6 @@
-import { Close, Menu } from '@public/icons'
+import { Book, Pen } from '@public/icons'
 import Link from 'next/link'
+import { AnimatePresence, motion } from 'framer-motion'
 
 interface ChatHistoriesProps {
     histories: {
@@ -20,16 +21,15 @@ const ChatHistories = ({
         <div className="flex h-screen w-[276px] flex-col bg-[#171717] text-gray-300">
             <div className="flex items-center justify-between px-4 py-3">
                 <button
-                    className="size-8 rounded p-1 hover:bg-gray-800"
+                    className="rounded-lg p-2 hover:bg-gray-900"
                     onClick={onClose}
                 >
-                    <Menu className="size-full transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
+                    <Book className="transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
                 </button>
-                <button
-                    className="size-8 rounded p-1.5 hover:bg-gray-800"
-                    onClick={onClose}
-                >
-                    <Close className="size-full transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
+                <button className="rounded-lg p-2 hover:bg-gray-900">
+                    <Link href={'/'}>
+                        <Pen className="size-full transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
+                    </Link>
                 </button>
             </div>
             <div className={'flex-1 overflow-scroll'}>
@@ -49,49 +49,63 @@ const ChatHistories = ({
                 <div className="p-2">
                     <div className="mb-4">
                         <ul>
-                            {histories.map((item, index) => {
-                                const bgColor =
-                                    item.chatId === currentChatId
-                                        ? 'bg-gray-900'
-                                        : ''
-                                const threeDotsVisibility =
-                                    item.chatId === currentChatId
-                                        ? '!visible'
-                                        : ''
-                                const threeDotsColor =
-                                    item.chatId === currentChatId
-                                        ? '!bg-gray-900'
-                                        : ''
-                                return (
-                                    <li key={index}>
-                                        <Link
-                                            href={`/c/${item.chatId}`}
-                                            className=""
+                            <AnimatePresence initial={false}>
+                                {histories.map((item, index) => {
+                                    const bgColor =
+                                        item.chatId === currentChatId
+                                            ? 'bg-gray-900'
+                                            : ''
+                                    const threeDotsVisibility =
+                                        item.chatId === currentChatId
+                                            ? '!visible'
+                                            : ''
+                                    const threeDotsColor =
+                                        item.chatId === currentChatId
+                                            ? '!bg-gray-900'
+                                            : ''
+                                    return (
+                                        <motion.li
+                                            key={index}
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{
+                                                opacity: 1,
+                                                height: 'auto',
+                                            }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            transition={{
+                                                ease: [0.76, 0, 0.24, 1],
+                                                duration: 0.6,
+                                            }}
                                         >
-                                            <div
-                                                className={`group relative overflow-hidden whitespace-nowrap rounded-xl p-2 text-[16px] font-normal tracking-tight hover:bg-gray-900 ${bgColor}`}
+                                            <Link
+                                                href={`/c/${item.chatId}`}
+                                                className=""
                                             >
-                                                {item.title ?? 'New Chat'}
                                                 <div
-                                                    className={`absolute inset-y-0 right-0 flex items-center justify-center bg-[#171717] group-hover:bg-gray-900 ${threeDotsColor}`}
-                                                    style={{
-                                                        maskImage:
-                                                            'linear-gradient(to left, black 60%, transparent)',
-                                                    }}
+                                                    className={`group relative overflow-hidden whitespace-nowrap rounded-xl p-2 text-[16px] font-normal tracking-tight hover:bg-gray-900 ${bgColor}`}
                                                 >
-                                                    <span
-                                                        className={`invisible flex h-full items-center justify-center gap-0.5 pl-6 pr-2 group-hover:visible ${threeDotsVisibility}`}
+                                                    {item.title ?? 'New Chat'}
+                                                    <div
+                                                        className={`absolute inset-y-0 right-0 flex items-center justify-center bg-[#171717] group-hover:bg-gray-900 ${threeDotsColor}`}
+                                                        style={{
+                                                            maskImage:
+                                                                'linear-gradient(to left, black 60%, transparent)',
+                                                        }}
                                                     >
-                                                        <span className="size-1 rounded-full bg-gray-400" />
-                                                        <span className="size-1 rounded-full bg-gray-400" />
-                                                        <span className="size-1 rounded-full bg-gray-400" />
-                                                    </span>
+                                                        <span
+                                                            className={`invisible flex h-full items-center justify-center gap-0.5 pl-6 pr-2 group-hover:visible ${threeDotsVisibility}`}
+                                                        >
+                                                            <span className="size-1 rounded-full bg-gray-400" />
+                                                            <span className="size-1 rounded-full bg-gray-400" />
+                                                            <span className="size-1 rounded-full bg-gray-400" />
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </Link>
-                                    </li>
-                                )
-                            })}
+                                            </Link>
+                                        </motion.li>
+                                    )
+                                })}
+                            </AnimatePresence>
                         </ul>
                     </div>
                 </div>

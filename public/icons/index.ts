@@ -14,8 +14,8 @@ import FileUpload from './FileUpload.svg'
 import Warn from './Warn.svg'
 import GoogleSignIn from './GoogleSignIn.svg'
 import SignOut from './SignOut.svg'
-import Menu from './Menu.svg'
 import Pen from './Pen.svg'
+import Book from './Book.svg'
 
 export {
     BurgerMenu,
@@ -34,6 +34,6 @@ export {
     Warn,
     GoogleSignIn,
     SignOut,
-    Menu,
     Pen,
+    Book,
 }

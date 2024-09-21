@@ -45,7 +45,7 @@ const useChatHistories = () => {
 const ChatSidebar = ({ open, onClose }: ChatSidebarProps) => {
     const { histories, currentChatId } = useChatHistories()
     return (
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
             {open && (
                 <motion.div
                     initial={{
@@ -68,13 +68,13 @@ const ChatSidebar = ({ open, onClose }: ChatSidebarProps) => {
                     >
                         <motion.div
                             initial={{
-                                x: '-256px',
+                                x: '-276px',
                             }}
                             animate={{
                                 x: 0,
                             }}
                             exit={{
-                                x: '-256px',
+                                x: '-276px',
                             }}
                             transition={{
                                 ease: [0.76, 0, 0.24, 1],

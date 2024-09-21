@@ -2,13 +2,17 @@ import { auth } from '@lib/client/config/firebase-config.ts'
 import { useRouter } from 'next/navigation'
 import { signOut } from 'firebase/auth'
 import { Popover, PopoverContent, PopoverHandler } from '@ui/material.tsx'
-import { Menu, Pen, SignOut } from '@public/icons'
+import { Book, Pen, SignOut } from '@public/icons'
 import { useAuth } from '@lib/client/hooks/use-auth.ts'
+import { motion } from 'framer-motion'
+import Link from 'next/link'
 
 export default function ChatHeader({
+    isSidebarOpen,
     onClickSidebar,
 }: {
-    onClickSidebar: () => void
+    isSidebarOpen: boolean
+    onClickSidebar: (open: boolean) => void
 }) {
     const { user } = useAuth()
     const router = useRouter()
@@ -28,17 +32,35 @@ export default function ChatHeader({
     return (
         <>
             <div className="flex items-center justify-between px-4 py-3">
-                <div className={'flex items-center justify-center gap-4'}>
-                    <button
-                        className="size-8 rounded p-1 hover:bg-gray-800"
-                        onClick={onClickSidebar}
+                {!isSidebarOpen && (
+                    <motion.div
+                        className={'flex items-center justify-center gap-4'}
+                        initial={{
+                            opacity: 0,
+                            x: '-100%',
+                        }}
+                        animate={{
+                            opacity: 1,
+                            x: 0,
+                            transition: {
+                                duration: 0.6,
+                                delay: 0.4,
+                            },
+                        }}
                     >
-                        <Menu className="size-full transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
-                    </button>
-                    <button className="size-8 rounded p-1.5 hover:bg-gray-800">
-                        <Pen className="size-full transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
-                    </button>
-                </div>
+                        <button
+                            className="rounded-lg p-2 hover:bg-gray-800"
+                            onClick={() => onClickSidebar(!isSidebarOpen)}
+                        >
+                            <Book className="size-full transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
+                        </button>
+                        <button className="rounded-lg p-2 hover:bg-gray-800">
+                            <Link href={'/'}>
+                                <Pen className="size-full transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
+                            </Link>
+                        </button>
+                    </motion.div>
+                )}
                 <div className={'flex gap-2'}></div>
                 {!user && (
                     <div className={'flex gap-2'}>
