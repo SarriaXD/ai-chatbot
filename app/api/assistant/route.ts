@@ -72,35 +72,50 @@ export async function POST(req: Request) {
                             switch (toolCall.function.name) {
                                 // configure your tool calls here
                                 case 'get_weather':
-                                    sendDataMessage({
-                                        role: 'data',
-                                        data: 'getting weather data',
-                                    })
                                     tool_output = await getWeatherData(
                                         parameters.city,
                                         parameters.language
                                     )
                                     sendDataMessage({
                                         role: 'data',
-                                        data: JSON.stringify(tool_output),
+                                        data: JSON.stringify({
+                                            tool_call_name: 'get_weather',
+                                            tool_output,
+                                        }),
                                     })
                                     return {
                                         tool_call_id: toolCall.id,
                                         output: JSON.stringify(tool_output),
                                     }
                                 case 'search':
+                                    tool_output = await tavilySearch(
+                                        parameters.query
+                                    )
+                                    sendDataMessage({
+                                        role: 'data',
+                                        data: JSON.stringify({
+                                            tool_call_name: 'search',
+                                            tool_output,
+                                        }),
+                                    })
                                     return {
                                         tool_call_id: toolCall.id,
-                                        output: JSON.stringify(
-                                            await tavilySearch(parameters.query)
-                                        ),
+                                        output: JSON.stringify(tool_output),
                                     }
                                 case 'retrieve':
+                                    tool_output = await retrieveSearch(
+                                        parameters.url
+                                    )
+                                    sendDataMessage({
+                                        role: 'data',
+                                        data: JSON.stringify({
+                                            tool_call_name: 'retrieve',
+                                            tool_output,
+                                        }),
+                                    })
                                     return {
                                         tool_call_id: toolCall.id,
-                                        output: JSON.stringify(
-                                            await retrieveSearch(parameters.url)
-                                        ),
+                                        output: JSON.stringify(tool_output),
                                     }
                                 default:
                                     throw new Error(
