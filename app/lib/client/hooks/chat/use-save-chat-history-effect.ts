@@ -21,7 +21,6 @@ const useSaveChatHistoryEffect = (
             const saveHistory = fetchWithToken(`/api/assistant/histories`, {
                 method: 'POST',
                 body: JSON.stringify({
-                    userId: user.uid,
                     chatId: threadId,
                     messages,
                 }),
