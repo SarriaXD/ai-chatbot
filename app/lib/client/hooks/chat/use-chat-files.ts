@@ -99,7 +99,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                     .map((file) =>
                         upload(file.name, file, {
                             access: 'public',
-                            handleUploadUrl: '/api/chat/upload',
+                            handleUploadUrl: '/api/assistant/upload',
                         })
                     )
                 // upload the pdfs to server
@@ -108,7 +108,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                     .map((file) =>
                         upload(file.name, file, {
                             access: 'public',
-                            handleUploadUrl: '/api/chat/upload',
+                            handleUploadUrl: '/api/assistant/upload',
                         })
                     )
                 const results = await Promise.all([
@@ -214,7 +214,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                     pdfs: before.pdfs.filter((pdf) => pdf.name !== name),
                 }
             })
-            await fetch(`/api/chat/upload?url=${url}`, {
+            await fetch(`/api/assistant/upload?url=${url}`, {
                 method: 'DELETE',
             })
         } catch (e) {
