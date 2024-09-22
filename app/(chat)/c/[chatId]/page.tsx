@@ -11,7 +11,6 @@ import ChatPanel from '@ui/chat/chat-panel/chat-panel.tsx'
 import useChatScroll from '@lib/client/hooks/chat/use-chat-scroll.ts'
 import DragZoneOverlay from '@ui/chat/drag-zone-overlay.tsx'
 import { notFound, usePathname } from 'next/navigation'
-import useSaveChatHistoryEffect from '@lib/client/hooks/chat/use-save-chat-history-effect.ts'
 import { useAuth } from '@lib/client/hooks/use-auth.ts'
 import { chatApiClient } from '@lib/client/data/chat-api-client.ts'
 import { Message } from 'ai'
@@ -33,6 +32,18 @@ export default function Page() {
         fetch: fetchWithToken,
         onError: () => {
             toast.error("something went wrong, we're working on it")
+        },
+        onFinish: () => {
+            if (user) {
+                chatApiClient
+                    .saveHistories({
+                        chatId,
+                        messages,
+                    })
+                    .catch(() => {
+                        toast.error("something went wrong, we're working on it")
+                    })
+            }
         },
     })
 
@@ -56,14 +67,6 @@ export default function Page() {
     }, [setInitialMessages, chatId, user, userLoading])
 
     const messages = useThrottle(fasterMessages, 30)
-
-    // Save the user's chat history
-    useSaveChatHistoryEffect({
-        user,
-        chatId,
-        messages,
-        isLoading,
-    })
 
     const {
         getRootProps,
