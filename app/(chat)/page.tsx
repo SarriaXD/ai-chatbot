@@ -13,12 +13,14 @@ import DragZoneOverlay from '@ui/chat/drag-zone-overlay.tsx'
 import { useAuth } from '@lib/client/hooks/use-auth.ts'
 import { useRouter } from 'next/navigation'
 import { v4 as uuidv4 } from 'uuid'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
+import { chatApiClient } from '@lib/client/data/chat-api-client.ts'
 
 export default function Page() {
     const { user } = useAuth()
     const router = useRouter()
     const chatId = useMemo(() => uuidv4(), [])
+    const titleLoaded = useRef(false)
     const {
         messages: fasterMessages,
         input,
@@ -31,6 +33,39 @@ export default function Page() {
         fetch: fetchWithToken,
         onError: () => {
             toast.error("something went wrong, we're working on it")
+        },
+        onFinish: async (message) => {
+            if (user) {
+                const saveHistory = async () => {
+                    return chatApiClient
+                        .saveMessage({
+                            chatId,
+                            message,
+                        })
+                        .catch(() => {
+                            toast.error(
+                                "something went wrong, we're working on it"
+                            )
+                        })
+                }
+                const updateTitle = async () => {
+                    if (!titleLoaded.current) {
+                        try {
+                            const titlePrompt = `Generate concise unpunctuated chat title from previous response: ${message.content}`
+                            const answer =
+                                await chatApiClient.getSuggestion(titlePrompt)
+                            await chatApiClient.updateHistory({
+                                chatId,
+                                title: answer.answer,
+                            })
+                            titleLoaded.current = true
+                        } catch (error) {
+                            toast.error('Can not update current title')
+                        }
+                    }
+                }
+                await Promise.all([saveHistory(), updateTitle()])
+            }
         },
     })
 
@@ -46,10 +81,20 @@ export default function Page() {
         onFileRemove,
         onSubmitWithFiles,
     } = useChatFiles(async (event, requestOptions) => {
+        handleSubmit(event, requestOptions)
         if (user) {
+            await chatApiClient.saveMessage({
+                chatId,
+                message: {
+                    id: uuidv4(),
+                    role: 'user',
+                    content: input,
+                    experimental_attachments:
+                        requestOptions?.experimental_attachments,
+                },
+            })
             router.push(`/c/${chatId}`)
         }
-        handleSubmit(event, requestOptions)
     })
 
     const { scrollRef } = useChatScroll(messages, isLoading)

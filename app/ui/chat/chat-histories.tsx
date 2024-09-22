@@ -64,19 +64,7 @@ const ChatHistories = ({
                                             ? '!bg-gray-900'
                                             : ''
                                     return (
-                                        <motion.li
-                                            key={item.chatId}
-                                            initial={{ opacity: 0, height: 0 }}
-                                            animate={{
-                                                opacity: 1,
-                                                height: 'auto',
-                                            }}
-                                            exit={{ opacity: 0, height: 0 }}
-                                            transition={{
-                                                ease: [0.76, 0, 0.24, 1],
-                                                duration: 0.6,
-                                            }}
-                                        >
+                                        <motion.li key={item.chatId} layout>
                                             <Link href={`/c/${item.chatId}`}>
                                                 <div
                                                     className={`group relative overflow-hidden whitespace-nowrap rounded-xl p-2 text-[16px] font-normal tracking-tight hover:bg-gray-900 ${bgColor}`}

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useChat } from 'ai/react'
 import { fetchWithToken } from '@lib/client/fetch-with-token.ts'
 import { toast } from 'react-toastify'
@@ -14,11 +14,13 @@ import { notFound, usePathname } from 'next/navigation'
 import { useAuth } from '@lib/client/hooks/use-auth.ts'
 import { chatApiClient } from '@lib/client/data/chat-api-client.ts'
 import { Message } from 'ai'
+import { v4 as uuidv4 } from 'uuid'
 
 export default function Page() {
     const chatId = usePathname().split('/').filter(Boolean).pop() || ''
     const { user, loading: userLoading } = useAuth()
     const [initialMessages, setInitialMessages] = useState<Message[]>([])
+    const titleLoaded = useRef(false)
     const {
         messages: fasterMessages,
         input,
@@ -33,20 +35,44 @@ export default function Page() {
         onError: () => {
             toast.error("something went wrong, we're working on it")
         },
-        onFinish: () => {
+        onFinish: async (message) => {
             if (user) {
-                chatApiClient
-                    .saveHistories({
-                        chatId,
-                        messages,
-                    })
-                    .catch(() => {
-                        toast.error("something went wrong, we're working on it")
-                    })
+                const saveHistory = async () => {
+                    return chatApiClient
+                        .saveMessage({
+                            chatId,
+                            message,
+                        })
+                        .catch(() => {
+                            toast.error(
+                                "something went wrong, we're working on it"
+                            )
+                        })
+                }
+                const updateTitle = async () => {
+                    if (!titleLoaded.current) {
+                        try {
+                            const titlePrompt = `Generate concise unpunctuated chat title from previous response: ${message.content}`
+                            const answer =
+                                await chatApiClient.getSuggestion(titlePrompt)
+                            await chatApiClient.updateHistory({
+                                chatId,
+                                title: answer.answer,
+                            })
+                            titleLoaded.current = true
+                        } catch (error) {
+                            toast.error('Can not update current title')
+                        }
+                    }
+                }
+                await Promise.all([saveHistory(), updateTitle()])
             }
         },
     })
 
+    const messages = useThrottle(fasterMessages, 30)
+
+    // load init data
     useEffect(() => {
         if (userLoading) {
             return
@@ -59,14 +85,11 @@ export default function Page() {
                 const data = await chatApiClient.fetchHistory(chatId)
                 setInitialMessages(data?.messages ?? [])
             }
-            fetchData().catch((error) => {
-                console.log(error)
+            fetchData().catch(() => {
                 toast.error('unable to fetch history data')
             })
         }
     }, [setInitialMessages, chatId, user, userLoading])
-
-    const messages = useThrottle(fasterMessages, 30)
 
     const {
         getRootProps,
@@ -77,7 +100,21 @@ export default function Page() {
         onFilesLoad,
         onFileRemove,
         onSubmitWithFiles,
-    } = useChatFiles(handleSubmit)
+    } = useChatFiles(async (event, requestOptions) => {
+        handleSubmit(event, requestOptions)
+        if (user) {
+            await chatApiClient.saveMessage({
+                chatId,
+                message: {
+                    id: uuidv4(),
+                    role: 'user',
+                    content: input,
+                    experimental_attachments:
+                        requestOptions?.experimental_attachments,
+                },
+            })
+        }
+    })
 
     const { scrollRef } = useChatScroll(messages, isLoading)
 

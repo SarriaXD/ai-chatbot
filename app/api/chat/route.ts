@@ -26,6 +26,7 @@ const systemPrompt = (currentDate: string) => {
 
 const model = openai('gpt-4o-mini')
 
+// talk to the ai
 export async function POST(request: Request) {
     const { messages } = await request.json()
     const result = await streamText({

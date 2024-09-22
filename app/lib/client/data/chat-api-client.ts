@@ -10,21 +10,39 @@ import {
 import { db } from '@lib/client/config/firebase-config.ts'
 // import { Timestamp } from 'firebase/firestore'
 
-const saveHistories = async ({
+const saveMessage = async ({
     chatId,
-    messages,
+    message,
     title,
 }: {
     chatId: string
-    messages: Message[]
+    message: Message
     title?: string
 }) => {
-    return await fetchWithToken(`/api/chat/histories`, {
+    return await fetchWithToken(`/api/chat/histories/messages`, {
         method: 'POST',
         body: JSON.stringify({
             chatId,
-            messages,
+            message,
             title,
+        }),
+    })
+}
+
+const updateHistory = async ({
+    chatId,
+    title,
+    messages,
+}: {
+    chatId: string
+    title?: string
+    messages?: Message[]
+}) => {
+    return await fetchWithToken(`/api/chat/histories/${chatId}`, {
+        method: 'POST',
+        body: JSON.stringify({
+            title,
+            messages,
         }),
     })
 }
@@ -35,7 +53,6 @@ const fetchHistory = async (
     chatId: string
     title?: string
     messages?: Message[]
-    updatedAt: Date
 }> => {
     const result = await fetchWithToken(`/api/chat/histories/${chatId}`)
     return await result.json()
@@ -79,8 +96,22 @@ const listenHistories = (
     )
 }
 
+const getSuggestion = async (
+    question: string
+): Promise<{
+    question: string
+    answer: string
+}> => {
+    const response = await fetchWithToken(
+        `/api/chat/suggestion?question=${question}`
+    )
+    return await response.json()
+}
+
 export const chatApiClient = {
-    saveHistories,
+    saveMessage,
+    updateHistory,
     fetchHistory,
     listenHistories,
+    getSuggestion,
 }

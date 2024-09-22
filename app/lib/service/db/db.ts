@@ -1,31 +1,33 @@
 import { admin } from '@lib/service/config/firebase-admin-config.ts'
 import { Message } from 'ai'
+import { firestore } from 'firebase-admin'
 
 const db = admin.firestore()
 
-export async function updateChat(
+export async function addMessage(
     userId: string,
     chatId: string,
-    messages: Message[] | null = [],
-    title: string | null = null
+    message: Message
 ) {
     try {
-        const conversationRef = db
+        const chatRef = db
             .collection('users')
             .doc(userId)
             .collection('chats')
             .doc(chatId)
 
-        await conversationRef.set(
+        const now = new Date()
+
+        await chatRef.set(
             {
-                messages,
-                title,
-                updatedAt: new Date(),
+                id: chatId,
+                updatedAt: now,
+                messages: firestore.FieldValue.arrayUnion(message),
             },
             { merge: true }
         )
     } catch (error) {
-        console.error('Error in storeChat:', error)
+        console.error('Error in addMessage:', error)
         throw error
     }
 }
@@ -42,12 +44,39 @@ export async function getChat(userId: string, chatId: string) {
         await chatRef.set({
             id: chatId,
             // Add any other initial fields you want for the chat document
-            createdAt: new Date(),
+            updatedAt: new Date(),
         })
         return chatRef // Return the reference to the newly created document
     }
 
     return doc.data()
+}
+
+export async function updateChat(
+    userId: string,
+    chatId: string,
+    title?: string,
+    messages?: Message[]
+) {
+    const chatRef = db
+        .collection('users')
+        .doc(userId)
+        .collection('chats')
+        .doc(chatId)
+
+    const updateData: any = {
+        updatedAt: new Date(),
+    }
+
+    if (title !== undefined) {
+        updateData.title = title
+    }
+
+    if (messages !== undefined) {
+        updateData.messages = messages
+    }
+
+    await chatRef.set(updateData, { merge: true })
 }
 
 export async function getChatsPaginated(
