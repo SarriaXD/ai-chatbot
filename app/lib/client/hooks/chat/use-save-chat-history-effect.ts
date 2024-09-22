@@ -9,20 +9,15 @@ const useSaveChatHistoryEffect = ({
     user,
     chatId,
     messages,
-    status,
+    isLoading,
 }: {
     user: User | null
-    chatId?: string
+    chatId: string
     messages: Message[]
-    status: 'in_progress' | 'awaiting_message'
+    isLoading: boolean
 }) => {
     useEffect(() => {
-        if (
-            user &&
-            chatId &&
-            messages.length > 0 &&
-            status === 'awaiting_message'
-        ) {
+        if (user && !isLoading) {
             chatApiClient
                 .saveHistories({
                     chatId,
@@ -32,7 +27,7 @@ const useSaveChatHistoryEffect = ({
                     toast.error("something went wrong, we're working on it")
                 })
         }
-    }, [messages, chatId, user, status])
+    }, [messages, chatId, user, isLoading])
 }
 
 export default useSaveChatHistoryEffect

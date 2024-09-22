@@ -6,8 +6,8 @@ const db = admin.firestore()
 export async function updateChat(
     userId: string,
     chatId: string,
-    messages: Message[],
-    title?: string
+    messages: Message[] | null = [],
+    title: string | null = null
 ) {
     try {
         const conversationRef = db
@@ -16,24 +16,14 @@ export async function updateChat(
             .collection('chats')
             .doc(chatId)
 
-        if (title) {
-            await conversationRef.set(
-                {
-                    messages,
-                    title,
-                    updatedAt: new Date(),
-                },
-                { merge: true }
-            )
-        } else {
-            await conversationRef.set(
-                {
-                    messages,
-                    updatedAt: new Date(),
-                },
-                { merge: true }
-            )
-        }
+        await conversationRef.set(
+            {
+                messages,
+                title,
+                updatedAt: new Date(),
+            },
+            { merge: true }
+        )
     } catch (error) {
         console.error('Error in storeChat:', error)
         throw error
@@ -49,7 +39,12 @@ export async function getChat(userId: string, chatId: string) {
     const doc = await chatRef.get()
 
     if (!doc.exists) {
-        return null
+        await chatRef.set({
+            id: chatId,
+            // Add any other initial fields you want for the chat document
+            createdAt: new Date(),
+        })
+        return chatRef // Return the reference to the newly created document
     }
 
     return doc.data()

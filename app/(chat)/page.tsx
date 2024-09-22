@@ -1,6 +1,6 @@
 'use client'
 
-import { useAssistant } from 'ai/react'
+import { useChat } from 'ai/react'
 import { fetchWithToken } from '@lib/client/fetch-with-token.ts'
 import { toast } from 'react-toastify'
 import { useThrottle } from '@uidotdev/usehooks'
@@ -10,23 +10,24 @@ import EmptyMessagePlaceholder from '@ui/chat/empty-message-placeholder.tsx'
 import ChatPanel from '@ui/chat/chat-panel/chat-panel.tsx'
 import useChatScroll from '@lib/client/hooks/chat/use-chat-scroll.ts'
 import DragZoneOverlay from '@ui/chat/drag-zone-overlay.tsx'
-import { useEffect } from 'react'
-import useSaveChatHistoryEffect from '@lib/client/hooks/chat/use-save-chat-history-effect.ts'
 import { useAuth } from '@lib/client/hooks/use-auth.ts'
+import { useRouter } from 'next/navigation'
+import { v4 as uuidv4 } from 'uuid'
+import { useMemo } from 'react'
 
 export default function Page() {
     const { user } = useAuth()
+    const router = useRouter()
+    const chatId = useMemo(() => uuidv4(), [])
     const {
-        threadId,
         messages: fasterMessages,
         input,
-        status,
-        setMessages,
-        submitMessage,
+        isLoading,
+        handleSubmit,
         setInput,
         stop,
-    } = useAssistant({
-        api: '/api/assistant',
+    } = useChat({
+        id: chatId,
         fetch: fetchWithToken,
         onError: () => {
             toast.error("something went wrong, we're working on it")
@@ -34,26 +35,6 @@ export default function Page() {
     })
 
     const messages = useThrottle(fasterMessages, 30)
-
-    // save the user's chat history
-    useSaveChatHistoryEffect({
-        user,
-        chatId: threadId,
-        messages,
-        status,
-    })
-
-    // Reload the page when the user navigates back to the chat
-    useEffect(() => {
-        const handlePopState = () => {
-            window.location.reload()
-        }
-        window.addEventListener('popstate', handlePopState)
-
-        return () => {
-            window.removeEventListener('popstate', handlePopState)
-        }
-    }, [])
 
     const {
         getRootProps,
@@ -65,28 +46,13 @@ export default function Page() {
         onFileRemove,
         onSubmitWithFiles,
     } = useChatFiles(async (event, requestOptions) => {
-        await submitMessage(event, requestOptions)
-        setMessages((prevMessages) => {
-            const beforeLastMessages = prevMessages.slice(0, -1)
-            const lastMessage = prevMessages[prevMessages.length - 1]
-            return [
-                ...beforeLastMessages,
-                {
-                    ...lastMessage,
-                    experimental_attachments:
-                        requestOptions?.experimental_attachments,
-                },
-            ]
-        })
+        if (user) {
+            router.push(`/c/${chatId}`)
+        }
+        handleSubmit(event, requestOptions)
     })
 
-    useEffect(() => {
-        if (user && threadId) {
-            window.history.pushState({}, '', `c/${threadId}`)
-        }
-    }, [threadId, user])
-
-    const { scrollRef } = useChatScroll(messages, status === 'in_progress')
+    const { scrollRef } = useChatScroll(messages, isLoading)
 
     return (
         <>
@@ -101,7 +67,7 @@ export default function Page() {
                     <div className="px-4">
                         <MessageList
                             messages={messages}
-                            isLoading={status === 'in_progress'}
+                            isLoading={isLoading}
                         />
                         <div ref={scrollRef} className="h-12 w-full" />
                     </div>
@@ -111,7 +77,7 @@ export default function Page() {
             </main>
             <ChatPanel
                 value={input}
-                isLoading={status === 'in_progress'}
+                isLoading={isLoading}
                 filesState={filesState}
                 onFilesLoad={onFilesLoad}
                 onFileRemove={onFileRemove}

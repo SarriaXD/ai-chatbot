@@ -7,7 +7,6 @@ import { useDropzone } from 'react-dropzone'
 export type HandleSubmit = (
     event?: FormEvent<HTMLFormElement>,
     requestOptions?: {
-        data?: Record<string, string>
         experimental_attachments?: Array<{
             url: string
             name: string
@@ -99,7 +98,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                     .map((file) =>
                         upload(file.name, file, {
                             access: 'public',
-                            handleUploadUrl: '/api/assistant/upload',
+                            handleUploadUrl: '/api/chat/upload',
                         })
                     )
                 // upload the pdfs to server
@@ -108,7 +107,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                     .map((file) =>
                         upload(file.name, file, {
                             access: 'public',
-                            handleUploadUrl: '/api/assistant/upload',
+                            handleUploadUrl: '/api/chat/upload',
                         })
                     )
                 const results = await Promise.all([
@@ -181,10 +180,6 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                     return
                 }
                 onSubmit(event, {
-                    data: {
-                        images: JSON.stringify(filesState.images),
-                        pdfs: JSON.stringify(filesState.pdfs),
-                    },
                     experimental_attachments: [
                         ...filesState.images,
                         ...filesState.pdfs,
@@ -214,11 +209,11 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                     pdfs: before.pdfs.filter((pdf) => pdf.name !== name),
                 }
             })
-            await fetch(`/api/assistant/upload?url=${url}`, {
+            await fetch(`/api/chat/upload?url=${url}`, {
                 method: 'DELETE',
             })
         } catch (e) {
-            console.log('Error removing file from server', e)
+            toast.error('Error removing file from server')
         }
     }, [])
 

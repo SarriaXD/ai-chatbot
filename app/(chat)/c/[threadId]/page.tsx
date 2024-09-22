@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useEffect } from 'react'
-import { useAssistant } from 'ai/react'
+import React, { useEffect, useState } from 'react'
+import { useChat } from 'ai/react'
 import { fetchWithToken } from '@lib/client/fetch-with-token.ts'
 import { toast } from 'react-toastify'
 import { useThrottle } from '@uidotdev/usehooks'
@@ -14,21 +14,22 @@ import { notFound, usePathname } from 'next/navigation'
 import useSaveChatHistoryEffect from '@lib/client/hooks/chat/use-save-chat-history-effect.ts'
 import { useAuth } from '@lib/client/hooks/use-auth.ts'
 import { chatApiClient } from '@lib/client/data/chat-api-client.ts'
+import { Message } from 'ai'
 
 export default function Page() {
-    const threadId = usePathname().split('/').filter(Boolean).pop() || ''
+    const chatId = usePathname().split('/').filter(Boolean).pop() || ''
     const { user, loading: userLoading } = useAuth()
+    const [initialMessages, setInitialMessages] = useState<Message[]>([])
     const {
         messages: fasterMessages,
         input,
-        status,
-        setMessages,
-        submitMessage,
+        isLoading,
+        handleSubmit,
         setInput,
         stop,
-    } = useAssistant({
-        threadId,
-        api: '/api/assistant',
+    } = useChat({
+        id: chatId,
+        initialMessages: initialMessages,
         fetch: fetchWithToken,
         onError: () => {
             toast.error("something went wrong, we're working on it")
@@ -42,25 +43,26 @@ export default function Page() {
         if (!user) {
             notFound()
         }
-        if (user && threadId) {
+        if (user && chatId) {
             const fetchData = async () => {
-                const data = await chatApiClient.fetchHistory(threadId)
-                setMessages(data.messages ?? [])
+                const data = await chatApiClient.fetchHistory(chatId)
+                setInitialMessages(data?.messages ?? [])
             }
-            fetchData().catch(() => {
+            fetchData().catch((error) => {
+                console.log(error)
                 toast.error('unable to fetch history data')
             })
         }
-    }, [setMessages, threadId, user, userLoading])
+    }, [setInitialMessages, chatId, user, userLoading])
 
     const messages = useThrottle(fasterMessages, 30)
 
     // Save the user's chat history
     useSaveChatHistoryEffect({
         user,
-        chatId: threadId,
+        chatId,
         messages,
-        status,
+        isLoading,
     })
 
     const {
@@ -72,23 +74,9 @@ export default function Page() {
         onFilesLoad,
         onFileRemove,
         onSubmitWithFiles,
-    } = useChatFiles(async (event, requestOptions) => {
-        await submitMessage(event, requestOptions)
-        setMessages((prevMessages) => {
-            const beforeLastMessages = prevMessages.slice(0, -1)
-            const lastMessage = prevMessages[prevMessages.length - 1]
-            return [
-                ...beforeLastMessages,
-                {
-                    ...lastMessage,
-                    experimental_attachments:
-                        requestOptions?.experimental_attachments,
-                },
-            ]
-        })
-    })
+    } = useChatFiles(handleSubmit)
 
-    const { scrollRef } = useChatScroll(messages, status === 'in_progress')
+    const { scrollRef } = useChatScroll(messages, isLoading)
 
     return (
         <>
@@ -103,7 +91,7 @@ export default function Page() {
                     <div className="px-4">
                         <MessageList
                             messages={messages}
-                            isLoading={status === 'in_progress'}
+                            isLoading={isLoading}
                         />
                         <div ref={scrollRef} className="h-12 w-full" />
                     </div>
@@ -111,7 +99,7 @@ export default function Page() {
             </main>
             <ChatPanel
                 value={input}
-                isLoading={status === 'in_progress'}
+                isLoading={isLoading}
                 filesState={filesState}
                 onFilesLoad={onFilesLoad}
                 onFileRemove={onFileRemove}

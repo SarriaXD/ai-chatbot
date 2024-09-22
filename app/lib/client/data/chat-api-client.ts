@@ -19,7 +19,7 @@ const saveHistories = async ({
     messages: Message[]
     title?: string
 }) => {
-    return await fetchWithToken(`/api/assistant/histories`, {
+    return await fetchWithToken(`/api/chat/histories`, {
         method: 'POST',
         body: JSON.stringify({
             chatId,
@@ -34,10 +34,10 @@ const fetchHistory = async (
 ): Promise<{
     chatId: string
     title?: string
-    messages: Message[]
+    messages?: Message[]
     updatedAt: Date
 }> => {
-    const result = await fetchWithToken(`/api/assistant/histories/${chatId}`)
+    const result = await fetchWithToken(`/api/chat/histories/${chatId}`)
     return await result.json()
 }
 
@@ -74,7 +74,6 @@ const listenHistories = (
             onHistoriesChange(updatedChats)
         },
         (error) => {
-            console.log('Error fetching chat histories:', error)
             onError(error)
         }
     )

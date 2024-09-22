@@ -27,9 +27,9 @@ const ChatHistories = ({
                     <Book className="transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
                 </button>
                 <button className="rounded-lg p-2 hover:bg-gray-900">
-                    <a href={'/'}>
+                    <Link href={'/'}>
                         <Pen className="size-full transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
-                    </a>
+                    </Link>
                 </button>
             </div>
             <div className={'flex-1 overflow-scroll'}>
@@ -50,7 +50,7 @@ const ChatHistories = ({
                     <div className="mb-4">
                         <ul>
                             <AnimatePresence initial={false}>
-                                {histories.map((item, index) => {
+                                {histories.map((item) => {
                                     const bgColor =
                                         item.chatId === currentChatId
                                             ? 'bg-gray-900'
@@ -65,7 +65,7 @@ const ChatHistories = ({
                                             : ''
                                     return (
                                         <motion.li
-                                            key={index}
+                                            key={item.chatId}
                                             initial={{ opacity: 0, height: 0 }}
                                             animate={{
                                                 opacity: 1,
@@ -81,7 +81,7 @@ const ChatHistories = ({
                                                 <div
                                                     className={`group relative overflow-hidden whitespace-nowrap rounded-xl p-2 text-[16px] font-normal tracking-tight hover:bg-gray-900 ${bgColor}`}
                                                 >
-                                                    {item.title ?? 'New Chat'}
+                                                    {item.title || 'New Chat'}
                                                     <div
                                                         className={`absolute inset-y-0 right-0 flex items-center justify-center bg-[#171717] group-hover:bg-gray-900 ${threeDotsColor}`}
                                                         style={{
