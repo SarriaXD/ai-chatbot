@@ -1,77 +1,20 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
-import { useChat } from 'ai/react'
-import { fetchWithToken } from '@lib/client/fetch-with-token.ts'
+import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { useThrottle } from '@uidotdev/usehooks'
-import useChatFiles from '@lib/client/hooks/chat/use-chat-files.ts'
 import MessageList from '@ui/chat/message-list.tsx'
 import ChatPanel from '@ui/chat/chat-panel/chat-panel.tsx'
-import useChatScroll from '@lib/client/hooks/chat/use-chat-scroll.ts'
 import DragZoneOverlay from '@ui/chat/drag-zone-overlay.tsx'
 import { notFound, usePathname } from 'next/navigation'
 import { useAuth } from '@lib/client/hooks/use-auth.ts'
 import { chatApiClient } from '@lib/client/data/chat-api-client.ts'
 import { Message } from 'ai'
-import { v4 as uuidv4 } from 'uuid'
+import useChatPage from '@lib/client/hooks/chat/use-chat-page.ts'
 
 export default function Page() {
     const chatId = usePathname().split('/').filter(Boolean).pop() || ''
     const { user, loading: userLoading } = useAuth()
     const [initialMessages, setInitialMessages] = useState<Message[]>([])
-    const titleLoaded = useRef(false)
-    const {
-        messages: fasterMessages,
-        input,
-        isLoading,
-        handleSubmit,
-        setInput,
-        stop,
-    } = useChat({
-        id: chatId,
-        initialMessages: initialMessages,
-        fetch: fetchWithToken,
-        onError: () => {
-            toast.error("something went wrong, we're working on it")
-        },
-        onFinish: async (message) => {
-            if (user) {
-                const saveHistory = async () => {
-                    return chatApiClient
-                        .saveMessage({
-                            chatId,
-                            message,
-                        })
-                        .catch(() => {
-                            toast.error(
-                                "something went wrong, we're working on it"
-                            )
-                        })
-                }
-                const updateTitle = async () => {
-                    if (!titleLoaded.current) {
-                        try {
-                            const titlePrompt = `Generate concise unpunctuated chat title from previous response: ${message.content}`
-                            const answer =
-                                await chatApiClient.getSuggestion(titlePrompt)
-                            await chatApiClient.updateHistory({
-                                chatId,
-                                title: answer.answer,
-                            })
-                            titleLoaded.current = true
-                        } catch (error) {
-                            toast.error('Can not update current title')
-                        }
-                    }
-                }
-                await Promise.all([saveHistory(), updateTitle()])
-            }
-        },
-    })
-
-    const messages = useThrottle(fasterMessages, 30)
-
     // load init data
     useEffect(() => {
         if (userLoading) {
@@ -92,6 +35,11 @@ export default function Page() {
     }, [setInitialMessages, chatId, user, userLoading])
 
     const {
+        messages,
+        input,
+        isLoading,
+        setInput,
+        stop,
         getRootProps,
         getInputProps,
         isDragActive,
@@ -99,24 +47,12 @@ export default function Page() {
         filesState,
         onFilesLoad,
         onFileRemove,
-        onSubmitWithFiles,
-    } = useChatFiles(async (event, requestOptions) => {
-        handleSubmit(event, requestOptions)
-        if (user) {
-            await chatApiClient.saveMessage({
-                chatId,
-                message: {
-                    id: uuidv4(),
-                    role: 'user',
-                    content: input,
-                    experimental_attachments:
-                        requestOptions?.experimental_attachments,
-                },
-            })
-        }
+        onSubmit,
+        scrollRef,
+    } = useChatPage({
+        chatId,
+        initialMessages,
     })
-
-    const { scrollRef } = useChatScroll(messages, isLoading)
 
     return (
         <>
@@ -144,7 +80,7 @@ export default function Page() {
                 onFilesLoad={onFilesLoad}
                 onFileRemove={onFileRemove}
                 open={open}
-                onSubmit={onSubmitWithFiles}
+                onSubmit={onSubmit}
                 onMessageChange={setInput}
                 onStop={stop}
             />
