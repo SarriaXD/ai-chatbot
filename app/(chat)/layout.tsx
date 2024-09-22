@@ -19,10 +19,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     return (
         <div className="flex size-full">
             {user && <ChatSidebar open={open} onClose={() => setOpen(false)} />}
-            <div className="flex h-screen flex-1 flex-col overflow-hidden">
-                {!loading && (
-                    <ChatHeader isSidebarOpen={open} onClickSidebar={setOpen} />
-                )}
+            <div className="flex h-full flex-1 flex-col overflow-hidden">
+                <ChatHeader
+                    loading={loading}
+                    isSidebarOpen={open}
+                    onClickSidebar={setOpen}
+                />
                 {children}
             </div>
         </div>
