@@ -27,9 +27,9 @@ const ChatHistories = ({
                     <Book className="transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
                 </button>
                 <button className="rounded-lg p-2 hover:bg-gray-900">
-                    <Link href={'/'}>
+                    <a href={'/'}>
                         <Pen className="size-full transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
-                    </Link>
+                    </a>
                 </button>
             </div>
             <div className={'flex-1 overflow-scroll'}>
@@ -77,10 +77,7 @@ const ChatHistories = ({
                                                 duration: 0.6,
                                             }}
                                         >
-                                            <Link
-                                                href={`/c/${item.chatId}`}
-                                                className=""
-                                            >
+                                            <Link href={`/c/${item.chatId}`}>
                                                 <div
                                                     className={`group relative overflow-hidden whitespace-nowrap rounded-xl p-2 text-[16px] font-normal tracking-tight hover:bg-gray-900 ${bgColor}`}
                                                 >

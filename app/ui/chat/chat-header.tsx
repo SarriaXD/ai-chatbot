@@ -5,7 +5,6 @@ import { Popover, PopoverContent, PopoverHandler } from '@ui/material.tsx'
 import { Book, Pen, SignOut } from '@public/icons'
 import { useAuth } from '@lib/client/hooks/use-auth.ts'
 import { motion } from 'framer-motion'
-import Link from 'next/link'
 
 export default function ChatHeader({
     isSidebarOpen,
@@ -62,9 +61,9 @@ export default function ChatHeader({
                                 </button>
                             )}
                             <button className="rounded-lg p-2 hover:bg-gray-800">
-                                <Link href={'/'}>
+                                <a href={'/'}>
                                     <Pen className="size-full transform text-gray-400 transition-all duration-200 hover:shadow-lg active:scale-95" />
-                                </Link>
+                                </a>
                             </button>
                         </motion.div>
                     )}
