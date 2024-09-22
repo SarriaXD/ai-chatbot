@@ -70,13 +70,13 @@ const ChatSidebar = ({ open, onClose }: ChatSidebarProps) => {
                     >
                         <motion.div
                             initial={{
-                                x: '-276px',
+                                x: '-256px',
                             }}
                             animate={{
                                 x: 0,
                             }}
                             exit={{
-                                x: '-276px',
+                                x: '-256px',
                             }}
                             transition={{
                                 ease: [0.76, 0, 0.24, 1],

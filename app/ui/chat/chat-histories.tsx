@@ -18,7 +18,7 @@ const ChatHistories = ({
     onClose,
 }: ChatHistoriesProps) => {
     return (
-        <div className="flex h-screen w-[276px] flex-col bg-[#171717] text-gray-300">
+        <div className="flex h-screen w-[256px] flex-col bg-[#171717] text-gray-300">
             <div className="flex items-center justify-between px-4 py-3">
                 <button
                     className="rounded-lg p-2 hover:bg-gray-900"
