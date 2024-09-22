@@ -18,7 +18,7 @@ const ChatHistories = ({
     onClose,
 }: ChatHistoriesProps) => {
     return (
-        <div className="flex h-screen w-[256px] flex-col bg-[#171717] text-gray-300">
+        <div className="flex h-full w-[256px] flex-col bg-[#171717] text-gray-300">
             <div className="flex items-center justify-between px-4 py-3">
                 <button
                     className="rounded-lg p-2 hover:bg-gray-900"
@@ -33,19 +33,6 @@ const ChatHistories = ({
                 </button>
             </div>
             <div className={'flex-1 overflow-scroll'}>
-                <ul className="space-y-2 p-4">
-                    {/*<li*/}
-                    {/*    className="flex cursor-pointer items-center space-x-3 rounded p-2 hover:bg-gray-800"*/}
-                    {/*>*/}
-                    {/*    <span className="text-xl font-normal">*/}
-                    {/*    */}
-                    {/*    </span>*/}
-                    {/*    <span>*/}
-                    {/*        */}
-                    {/*    </span>*/}
-                    {/*</li>*/}
-                </ul>
-
                 <div className="p-2">
                     <div className="mb-4">
                         <ul>

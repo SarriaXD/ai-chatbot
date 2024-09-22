@@ -50,15 +50,18 @@ const ChatSidebar = ({ open, onClose }: ChatSidebarProps) => {
                 <motion.div
                     initial={{
                         backdropFilter: 'blur(0px)',
+                        WebkitBackdropFilter: 'blur(0px)',
                     }}
                     animate={{
-                        backdropFilter: 'blur(5px)',
+                        backdropFilter: 'blur(20px)',
+                        WebkitBackdropFilter: 'blur(20px)',
                     }}
                     exit={{
                         backdropFilter: 'blur(0px)',
+                        WebkitBackdropFilter: 'blur(0px)',
                     }}
                     onClick={onClose}
-                    className="fixed left-0 top-0 z-50 inline-block size-full bg-transparent will-change-transform md:static md:w-auto md:backdrop-blur-none"
+                    className="fixed z-50 size-full bg-transparent md:static md:w-auto md:backdrop-blur-none"
                 >
                     <motion.div
                         initial={{ width: 0 }}
@@ -66,7 +69,7 @@ const ChatSidebar = ({ open, onClose }: ChatSidebarProps) => {
                         exit={{ width: 0 }}
                         onClick={(e) => e.stopPropagation()}
                         transition={{ ease: [0.76, 0, 0.24, 1], duration: 0.6 }}
-                        className="inline-block"
+                        className="inline-block h-full"
                     >
                         <motion.div
                             initial={{
@@ -82,7 +85,7 @@ const ChatSidebar = ({ open, onClose }: ChatSidebarProps) => {
                                 ease: [0.76, 0, 0.24, 1],
                                 duration: 0.6,
                             }}
-                            className={'inline-block'}
+                            className={'inline-block h-full'}
                         >
                             <ChatHistories
                                 histories={histories}
