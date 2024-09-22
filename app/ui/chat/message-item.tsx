@@ -35,7 +35,7 @@ const MessageItem = (props: MessageProps) => {
 
 const UserItem = ({ message }: MessageProps) => {
     const imageAttachments = message.experimental_attachments?.filter(
-        (attachment) => attachment?.contentType?.startsWith('image/'),
+        (attachment) => attachment?.contentType?.startsWith('image/')
     )
     return (
         <div className="flex flex-col gap-4">
@@ -71,7 +71,7 @@ const AssistantItem = ({ message }: MessageProps) => {
             <div className="size-8 self-start rounded-full bg-gray-300 p-1.5 text-black">
                 <Dog className="size-full" />
             </div>
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
                 <MarkdownBlock markdown={message.content} />
             </div>
         </div>
@@ -167,9 +167,9 @@ const WeatherInformationItem = ({ toolInvocation }: ToolcallItemProps) => {
 }
 
 const WeatherIcon = ({
-                         localtime,
-                         weatherCondition,
-                     }: {
+    localtime,
+    weatherCondition,
+}: {
     localtime: Date
     weatherCondition: string
 }) => {
