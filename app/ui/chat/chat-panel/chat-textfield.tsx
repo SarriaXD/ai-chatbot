@@ -15,16 +15,10 @@ interface ChatTextFieldProps {
 }
 
 export interface FilesState {
-    images: {
+    files: {
         isUploading: boolean
         url: string
         previewUrl: string
-        name: string
-        contentType: string
-    }[]
-    pdfs: {
-        isUploading: boolean
-        url: string
         name: string
         contentType: string
     }[]
@@ -44,10 +38,8 @@ const ChatTextfield = ({
     return (
         <div className="flex flex-col rounded-[28px] bg-[#2F2F2F] py-1 pl-3.5 pr-2 md:py-2 md:pl-6 md:pr-2">
             <FilesPreviewGallery
-                images={filesState.images}
-                pdfs={filesState.pdfs}
-                onImageRemove={onFileRemove}
-                onPDFRemove={onFileRemove}
+                files={filesState.files}
+                onFileRemove={onFileRemove}
             />
             <InnerTextfield
                 value={value}
@@ -86,8 +78,8 @@ const InnerTextfield = ({
     onSubmit,
     onStop,
 }: InnerTextfieldProps) => {
-    const isSomeFilesUploading = filesState.images.some(
-        (image) => image.isUploading
+    const isSomeFilesUploading = filesState.files.some(
+        (file) => file.isUploading
     )
     const inputRef = React.useRef<HTMLInputElement>(null)
     useEffect(() => {
@@ -110,19 +102,30 @@ const InnerTextfield = ({
                 if (!items || items.length === 0) {
                     return
                 }
-                const allowedImageTypes = [
+                const allowedContentTypes = [
                     'image/jpeg',
                     'image/png',
                     'image/jpg',
-                    'application/pdf',
+                    'text/*',
                 ]
+                const isValidFileType = (fileName: string) =>
+                    allowedContentTypes.some((allowedType) => {
+                        if (allowedType.endsWith('/*')) {
+                            // Handle wildcard types like 'text/*'
+                            const prefix = allowedType.slice(0, -1) // Remove the '*'
+                            return fileName.startsWith(prefix)
+                        } else {
+                            // Exact match for specific types
+                            return fileName === allowedType
+                        }
+                    })
                 const files: File[] = []
                 for (let i = 0; i < items.length; i++) {
                     const item = items[i]
                     if (item.kind === 'file') {
                         event.preventDefault()
                     }
-                    if (allowedImageTypes.includes(item.type)) {
+                    if (isValidFileType(item.type)) {
                         const file = item.getAsFile()
                         if (file) {
                             files.push(file)

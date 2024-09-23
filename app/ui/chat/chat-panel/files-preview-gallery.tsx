@@ -1,33 +1,21 @@
 import { motion } from 'framer-motion'
 import React from 'react'
 import ImagePreviewItem from './image-preview-item.tsx'
-import PDFPreviewItem from './PDF-preview-item.tsx'
+import TextPreviewItem from '@ui/chat/chat-panel/text-preview-item.tsx'
 
 interface FilesPreviewProps {
-    images: {
+    files: {
         isUploading: boolean
         url: string
         previewUrl: string
         name: string
         contentType: string
     }[]
-    pdfs: {
-        isUploading: boolean
-        url: string
-        name: string
-        contentType: string
-    }[]
-    onPDFRemove: (name: string, url: string) => void
-    onImageRemove: (name: string, url: string) => void
+    onFileRemove: (name: string, url: string) => void
 }
 
-const FilesPreviewGallery = ({
-    images,
-    pdfs,
-    onImageRemove,
-    onPDFRemove,
-}: FilesPreviewProps) => {
-    const hasFiles = images.length + pdfs.length > 0
+const FilesPreviewGallery = ({ files, onFileRemove }: FilesPreviewProps) => {
+    const hasFiles = files.length > 0
     return (
         <motion.div
             animate={{
@@ -36,25 +24,25 @@ const FilesPreviewGallery = ({
             }}
         >
             <div className="flex gap-4">
-                {images.map((file) => (
-                    <ImagePreviewItem
-                        key={file.name}
-                        previewUrl={file.previewUrl}
-                        url={file.url}
-                        name={file.name}
-                        isUploading={file.isUploading}
-                        onImageRemove={onImageRemove}
-                    />
-                ))}
-                {pdfs.map((file) => (
-                    <PDFPreviewItem
-                        key={file.name}
-                        url={file.url}
-                        name={file.name}
-                        isUploading={file.isUploading}
-                        onPDFRemove={onPDFRemove}
-                    />
-                ))}
+                {files.map((file) => {
+                    if (file.contentType.startsWith('image')) {
+                        return (
+                            <ImagePreviewItem
+                                key={file.name}
+                                {...file}
+                                onImageRemove={onFileRemove}
+                            />
+                        )
+                    } else {
+                        return (
+                            <TextPreviewItem
+                                key={file.name}
+                                {...file}
+                                onFileRemove={onFileRemove}
+                            />
+                        )
+                    }
+                })}
             </div>
         </motion.div>
     )

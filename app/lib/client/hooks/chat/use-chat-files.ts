@@ -15,57 +15,60 @@ export type HandleSubmit = (
     }
 ) => void
 
+const validateFiles = (previousFilesState: FilesState, files: File[]) => {
+    if (previousFilesState.files.length + files.length > 2) {
+        throw new Error('You can only upload up to 2 files')
+    }
+
+    // check if the file type is valid, currently only images and text are allowed
+    const allowedContentTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/jpg',
+        'text/*',
+    ]
+    const isValidFileType = (file: File) =>
+        allowedContentTypes.some((allowedType) => {
+            if (allowedType.endsWith('/*')) {
+                // Handle wildcard types like 'text/*'
+                const prefix = allowedType.slice(0, -1) // Remove the '*'
+                return file.type.startsWith(prefix)
+            } else {
+                // Exact match for specific types
+                return file.type === allowedType
+            }
+        })
+    if (files.some((file) => !isValidFileType(file))) {
+        throw new Error('only images and text files are allowed')
+    }
+    // filter out files that are already uploaded
+    const previousFile = previousFilesState.files.map((file) => file.name)
+    const filteredFiles = files.filter((file) => {
+        return !previousFile.includes(file.name)
+    })
+    // check if the total size of files is less than 5MB
+    if (filteredFiles.some((file) => file.size > 5 * 1024 * 1024)) {
+        throw new Error('File size should be less than 5MB')
+    }
+    return filteredFiles
+}
+
 const useChatFiles = (onSubmit: HandleSubmit) => {
     const [filesState, setFilesState] = useState<FilesState>({
-        images: [],
-        pdfs: [],
+        files: [],
     })
 
     const onFilesLoad = useCallback(
         async (acceptedFiles: File[]) => {
             try {
-                // check if the file type is valid, currently only images and PDFs are allowed
-                const allowedContentTypes = [
-                    'image/jpeg',
-                    'image/png',
-                    'image/jpg',
-                    // 'application/pdf',
-                ]
-                if (
-                    acceptedFiles.some(
-                        (file) => !allowedContentTypes.includes(file.type)
-                    )
-                ) {
-                    toast.error('Currently only images are allowed')
-                    return
-                }
-                // filter out files that are already uploaded
-                const beforeFileNames = filesState.images.map(
-                    (image) => image.name
-                )
-                const filteredFiles = acceptedFiles.filter((file) => {
-                    return !beforeFileNames.includes(file.name)
-                })
-                // check if the total size of files is less than 5MB
-                if (filteredFiles.some((file) => file.size > 5 * 1024 * 1024)) {
-                    toast.error('You can only upload files up to 5MB')
-                    return
-                }
-                // check if the total number of files is less than 2
-                if (filteredFiles.length + filesState.images.length > 2) {
-                    toast.error('You can only upload up to 2 files')
-                    return
-                }
+                const validatedFiles = validateFiles(filesState, acceptedFiles)
                 // update the preview url for images for better user experience
-                setFilesState((before) => {
+                setFilesState((prevState) => {
                     return {
-                        images: [
-                            ...before.images,
-                            ...filteredFiles
-                                .filter((file) =>
-                                    file.type.startsWith('image/')
-                                )
-                                .map((file) => {
+                        files: [
+                            ...prevState.files,
+                            ...validatedFiles.map((file) => {
+                                if (file.type.startsWith('image/')) {
                                     return {
                                         url: '',
                                         isUploading: true,
@@ -73,93 +76,45 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                                         name: file.name,
                                         contentType: file.type,
                                     }
-                                }),
+                                }
+                                return {
+                                    url: '',
+                                    isUploading: true,
+                                    previewUrl: '',
+                                    name: file.name,
+                                    contentType: file.type,
+                                }
+                            }),
                         ],
-                        pdfs: [
-                            ...before.pdfs,
-                            ...filteredFiles
-                                .filter(
-                                    (file) => file.type === 'application/pdf'
-                                )
-                                .map((file) => {
+                    }
+                })
+                for (const file of validatedFiles) {
+                    const result = await upload(file.name, file, {
+                        access: 'public',
+                        handleUploadUrl: '/api/chat/upload',
+                    })
+                    setFilesState((before) => {
+                        return {
+                            files: before.files.map((prevState) => {
+                                if (prevState.name === file.name) {
                                     return {
-                                        url: '',
-                                        isUploading: true,
-                                        name: file.name,
-                                        contentType: file.type,
+                                        ...prevState,
+                                        url: result.url,
+                                        isUploading: false,
                                     }
-                                }),
-                        ],
-                    }
-                })
-                // upload images to server
-                const imagesPromises = filteredFiles
-                    .filter((file) => file.type.startsWith('image/'))
-                    .map((file) =>
-                        upload(file.name, file, {
-                            access: 'public',
-                            handleUploadUrl: '/api/chat/upload',
-                        })
-                    )
-                // upload the pdfs to server
-                const pdfsPromises = filteredFiles
-                    .filter((file) => file.type === 'application/pdf')
-                    .map((file) =>
-                        upload(file.name, file, {
-                            access: 'public',
-                            handleUploadUrl: '/api/chat/upload',
-                        })
-                    )
-                const results = await Promise.all([
-                    ...imagesPromises,
-                    ...pdfsPromises,
-                ])
-                // update the url of the uploaded files for the previous images with '' url
-                setFilesState((before) => {
-                    const images = before.images.map((image) => {
-                        const result = results.find(
-                            (result) => result.pathname === image.name
-                        )
-                        if (result) {
-                            return {
-                                ...image,
-                                url: result.url,
-                                isUploading: false,
-                            }
-                        } else {
-                            return image
+                                }
+                                return prevState
+                            }),
                         }
                     })
-                    const pdfs = before.pdfs.map((pdf) => {
-                        const result = results.find(
-                            (result) => result.pathname === pdf.name
-                        )
-                        if (result) {
-                            return {
-                                ...pdf,
-                                url: result.url,
-                                isUploading: false,
-                            }
-                        } else {
-                            return pdf
-                        }
-                    })
-                    return {
-                        images: [...images],
-                        pdfs: [...pdfs],
-                    }
-                })
-            } catch (e) {
-                toast.error(`Error uploading files ${e}`)
-
+                }
+            } catch (error) {
+                toast.error(`${error}`)
                 // clean up the files that are not uploaded
-                setFilesState((before) => {
+                setFilesState((previousFileState) => {
                     return {
-                        images: before.images.filter(
-                            (image) => !image.isUploading && image.url !== ''
-                        ),
-                        pdfs: before.pdfs.filter(
-                            (pdf) => !pdf.isUploading && pdf.url !== ''
+                        files: previousFileState.files.filter(
+                            (file) => !file.isUploading && file.url !== ''
                         ),
                     }
                 })
@@ -172,26 +127,22 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
         (event: FormEvent<HTMLFormElement>) => {
             try {
                 // check if some files are still uploading
-                const isSomeFilesUploading =
-                    filesState.images.some((image) => image.isUploading) ||
-                    filesState.pdfs.some((pdf) => pdf.isUploading)
+                const isSomeFilesUploading = filesState.files.some(
+                    (file) => file.isUploading
+                )
                 if (isSomeFilesUploading) {
                     toast.error('Files are still uploading')
                     return
                 }
                 onSubmit(event, {
-                    experimental_attachments: [
-                        ...filesState.images,
-                        ...filesState.pdfs,
-                    ],
+                    experimental_attachments: [...filesState.files],
                 })
             } catch (e) {
                 toast.error("Can' sent message right now")
             } finally {
                 setFilesState(() => {
                     return {
-                        images: [],
-                        pdfs: [],
+                        files: [],
                     }
                 })
             }
@@ -201,12 +152,11 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
 
     const onFileRemove = useCallback(async (name: string, url: string) => {
         try {
-            setFilesState((before) => {
+            setFilesState((prevState) => {
                 return {
-                    images: before.images.filter(
+                    files: prevState.files.filter(
                         (image) => image.name !== name
                     ),
-                    pdfs: before.pdfs.filter((pdf) => pdf.name !== name),
                 }
             })
             await fetch(`/api/chat/upload?url=${url}`, {
