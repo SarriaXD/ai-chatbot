@@ -17,7 +17,7 @@ const ZoomableImage = (props: IntrinsicElements['img']) => {
             <AnimatePresence>
                 {open && (
                     <motion.div
-                        className="fixed left-0 top-0 z-50 flex h-screen w-screen cursor-pointer items-center justify-center"
+                        className="fixed left-0 top-0 z-50 flex size-full cursor-pointer items-center justify-center"
                         initial={{
                             backdropFilter: 'blur(0px)',
                             WebkitBackdropFilter: 'blur(0px)',
