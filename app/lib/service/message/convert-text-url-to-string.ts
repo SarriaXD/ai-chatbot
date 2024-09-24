@@ -3,7 +3,6 @@ import PDFParser from 'pdf2json'
 
 const convertTextUrlToString = async (url: string): Promise<string> => {
     try {
-        console.log('Fetching URL: the url', url)
         const response = await fetch(url)
         if (!response.ok)
             throw new Error(`HTTP error! status: ${response.status}`)
@@ -12,13 +11,10 @@ const convertTextUrlToString = async (url: string): Promise<string> => {
         const buffer = await response.arrayBuffer()
 
         if (contentType.includes('html')) {
-            console.log('Parsing HTML')
             return await parseHtml(buffer)
         } else if (url.endsWith('.pdf')) {
-            console.log('Parsing PDF')
             return await extractTextFromPdf(buffer)
         } else if (contentType.startsWith('text/')) {
-            console.log('Parsing plain text')
             return Buffer.from(buffer).toString().trim().replace(/\s+/g, ' ')
         } else {
             throw new Error(`Unsupported content type: ${contentType}`)
