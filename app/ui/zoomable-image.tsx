@@ -30,14 +30,21 @@ const ZoomableImage = (props: IntrinsicElements['img']) => {
                             backdropFilter: 'blur(0px)',
                             WebkitBackdropFilter: 'blur(0px)',
                         }}
+                        transition={{
+                            ease: [0.76, 0, 0.24, 1],
+                            duration: 0.3,
+                        }}
                         onClick={() => setOpen(false)}
                     >
                         <motion.img
                             layoutId={`expandable-image-${props.src}`}
                             src={props.src}
                             alt={props.alt}
-                            className={`h-[90%] w-[90%] rounded-xl !bg-transparent object-contain p-4`}
-                            transition={{ duration: 0.3 }}
+                            className={`size-[95%] rounded-xl !bg-transparent object-contain`}
+                            transition={{
+                                ease: [0.76, 0, 0.24, 1],
+                                duration: 0.6,
+                            }}
                         />
                     </motion.div>
                 )}
