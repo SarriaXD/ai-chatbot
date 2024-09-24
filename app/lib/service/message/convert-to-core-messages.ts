@@ -55,7 +55,7 @@ export async function convertToCoreMessages(
         } else if (role === 'assistant') {
             if (toolInvocations == null) {
                 coreMessages.push({ role: 'assistant', content })
-                break
+                continue
             }
 
             // assistant message with tool calls
