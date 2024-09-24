@@ -102,30 +102,19 @@ const InnerTextfield = ({
                 if (!items || items.length === 0) {
                     return
                 }
-                const allowedContentTypes = [
-                    'image/jpeg',
-                    'image/png',
-                    'image/jpg',
-                    'text/*',
-                ]
-                const isValidFileType = (fileName: string) =>
-                    allowedContentTypes.some((allowedType) => {
-                        if (allowedType.endsWith('/*')) {
-                            // Handle wildcard types like 'text/*'
-                            const prefix = allowedType.slice(0, -1) // Remove the '*'
-                            return fileName.startsWith(prefix)
-                        } else {
-                            // Exact match for specific types
-                            return fileName === allowedType
-                        }
-                    })
                 const files: File[] = []
                 for (let i = 0; i < items.length; i++) {
                     const item = items[i]
                     if (item.kind === 'file') {
                         event.preventDefault()
                     }
-                    if (isValidFileType(item.type)) {
+                    if (
+                        item.type === 'image/png' ||
+                        item.type === 'image/jpeg' ||
+                        item.type === 'image/jpg' ||
+                        item.type === 'application/pdf' ||
+                        item.type.startsWith('text/')
+                    ) {
                         const file = item.getAsFile()
                         if (file) {
                             files.push(file)

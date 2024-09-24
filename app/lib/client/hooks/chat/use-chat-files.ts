@@ -25,6 +25,10 @@ const isText = (file: File) => {
     return file.type.startsWith('text/')
 }
 
+const isPdf = (file: File) => {
+    return file.type === 'application/pdf'
+}
+
 const validateFiles = (previousFilesState: FilesState, files: File[]) => {
     if (previousFilesState.files.length + files.length > 2) {
         throw new Error('You can only upload up to 2 files')
@@ -36,9 +40,12 @@ const validateFiles = (previousFilesState: FilesState, files: File[]) => {
                 throw new Error('Image size must be less than 5MB')
             }
         } else if (isText(file)) {
-            console.log('file size', file.size)
             if (file.size > 500 * 1024) {
-                throw new Error('Text file size must be less than 10KB')
+                throw new Error('Text file size must be less than 500KB')
+            }
+        } else if (isPdf(file)) {
+            if (file.size > 5 * 1024 * 1024) {
+                throw new Error('PDF file size must be less than 5MB')
             }
         } else {
             throw new Error(
@@ -82,7 +89,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                                         contentType: file.type,
                                     }
                                 }
-                                if (isText(file)) {
+                                if (isText(file) || isPdf(file)) {
                                     return {
                                         url: '',
                                         isUploading: true,

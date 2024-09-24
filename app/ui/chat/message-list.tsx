@@ -1,4 +1,4 @@
-import MessageItem from './message-item.tsx'
+import MessageItem from './message-item/message-item.tsx'
 import { Message } from 'ai'
 import ThreeDotsLoading from './three-dots-loading.tsx'
 

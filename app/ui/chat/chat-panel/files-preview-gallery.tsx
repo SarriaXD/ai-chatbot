@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import React from 'react'
 import ImagePreviewItem from './image-preview-item.tsx'
-import TextPreviewItem from '@ui/chat/chat-panel/text-preview-item.tsx'
+import FilePreviewItem from '@ui/chat/chat-panel/file-preview-item.tsx'
 
 interface FilesPreviewProps {
     files: {
@@ -35,7 +35,7 @@ const FilesPreviewGallery = ({ files, onFileRemove }: FilesPreviewProps) => {
                         )
                     } else {
                         return (
-                            <TextPreviewItem
+                            <FilePreviewItem
                                 key={file.name}
                                 {...file}
                                 onFileRemove={onFileRemove}

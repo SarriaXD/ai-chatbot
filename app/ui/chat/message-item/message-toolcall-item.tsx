@@ -1,82 +1,7 @@
-import MarkdownBlock from './markdown-block/markdown-block.tsx'
-import { Message, ToolInvocation } from 'ai'
-import { Dog } from '@public/icons'
+import { ToolInvocation } from 'ai'
 import { WeatherData } from '@lib/service/utils/weather-utils.ts'
+import React from 'react'
 import { SearchResults } from '@lib/service/utils/search-utils.ts'
-
-interface MessageProps {
-    message: Message
-    isLoading: boolean
-    isLast: boolean
-}
-
-const MessageItem = (props: MessageProps) => {
-    const { message } = props
-    const { role } = message
-    if (role === 'user') {
-        return <UserItem {...props} />
-    } else if (role === 'assistant') {
-        if (message.toolInvocations && message.toolInvocations.length > 0) {
-            return (
-                <div>
-                    {message.toolInvocations.map((toolInvocation) => (
-                        <ToolcallItem
-                            key={toolInvocation.toolCallId}
-                            toolInvocation={toolInvocation}
-                        />
-                    ))}
-                </div>
-            )
-        } else {
-            return <AssistantItem {...props} />
-        }
-    }
-}
-
-const UserItem = ({ message }: MessageProps) => {
-    const imageAttachments = message.experimental_attachments?.filter(
-        (attachment) => attachment?.contentType?.startsWith('image/')
-    )
-    return (
-        <div className="flex flex-col gap-4">
-            <div className="flex justify-end">
-                <p className="break-all rounded-[20px] bg-[#2F2F2F] px-4 py-2 !font-normal !text-[#ECECEC]">
-                    {message.content}
-                </p>
-            </div>
-            {imageAttachments && (
-                <div className="flex justify-end gap-4">
-                    {imageAttachments.map((attachment, index) => (
-                        <div
-                            key={`${message.id}-${index}`}
-                            className="relative h-80 overflow-hidden rounded-lg"
-                        >
-                            {/* eslint-disable-next-line @next/next/no-img-element*/}
-                            <img
-                                src={attachment.url}
-                                alt={attachment.name || 'user image'}
-                                className={'h-full w-auto'}
-                            />
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
-    )
-}
-
-const AssistantItem = ({ message }: MessageProps) => {
-    return (
-        <div className="flex gap-4">
-            <div className="size-8 self-start rounded-full bg-gray-300 p-1.5 text-black">
-                <Dog className="size-full" />
-            </div>
-            <div className="min-w-0 flex-1">
-                <MarkdownBlock markdown={message.content} />
-            </div>
-        </div>
-    )
-}
 
 interface ToolcallItemProps {
     toolInvocation: ToolInvocation
@@ -229,4 +154,4 @@ const SearchItem = ({ toolInvocation }: ToolcallItemProps) => {
     }
 }
 
-export default MessageItem
+export default ToolcallItem

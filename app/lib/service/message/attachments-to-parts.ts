@@ -1,5 +1,6 @@
 import { Attachment, ImagePart, TextPart } from 'ai'
 import { convertTextUrlToString } from '@lib/service/message/convert-text-url-to-string.ts'
+import { convertPDFUrlToString } from '@lib/service/message/convert-pdf-url-to-string.ts'
 
 type ContentPart = TextPart | ImagePart
 
@@ -19,6 +20,13 @@ export async function attachmentsToParts(
         }
         if (attachment.contentType?.startsWith('text/')) {
             const convertedText = await convertTextUrlToString(attachment.url)
+            parts.push({
+                type: 'text',
+                text: convertedText,
+            })
+        }
+        if (attachment.contentType === 'application/pdf') {
+            const convertedText = await convertPDFUrlToString(attachment.url)
             parts.push({
                 type: 'text',
                 text: convertedText,

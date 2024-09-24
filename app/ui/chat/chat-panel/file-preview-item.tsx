@@ -25,7 +25,7 @@ function separateFileNameAndExtension(fullFileName: string): {
     }
 }
 
-const TextPreviewItem = ({
+const FilePreviewItem = ({
     url,
     name,
     isUploading,
@@ -56,4 +56,4 @@ const TextPreviewItem = ({
     )
 }
 
-export default TextPreviewItem
+export default FilePreviewItem
