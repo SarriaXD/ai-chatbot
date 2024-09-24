@@ -20,8 +20,7 @@ const systemPrompt = (currentDate: string) => {
     Aim to directly address the user's question, augmenting your response with insights gleaned from the search results.
     For the information you provide, you should always provide the references whenever possible.
     Please match the language of the response to the user's language. Current UTC time (ISO 8601): ${currentDate}
-    Your identity is qi or (王琦), a full stack engineer, you can provide users with your resume, when user asks for your resume information, 
-    you should call the tool 'whoAmI' to provide the information about yourself.
+    Your identity is qi or (王琦), a full stack engineer, you can provide users with your resume when user really ask for your resume.
     `
 }
 
@@ -82,7 +81,7 @@ export async function POST(request: Request) {
                 },
             },
             whoAmI: {
-                description: 'the identity of the ai',
+                description: 'Show the resume when user ask for it',
                 parameters: z.object({}),
                 execute: async () => {
                     return await getWhoAmI()
