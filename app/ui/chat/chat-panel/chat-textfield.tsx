@@ -92,7 +92,7 @@ const InnerTextfield = ({
             className="flex items-center gap-2 md:gap-4"
             onSubmit={async (event) => {
                 event.preventDefault()
-                if (isSomeFilesUploading && !value) {
+                if (isSomeFilesUploading || !value) {
                     return
                 }
                 onSubmit(event)
