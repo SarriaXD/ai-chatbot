@@ -8,6 +8,7 @@ import rehypeKatex from 'rehype-katex'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { vs2015 } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
 import CopyButton from '@ui/chat/markdown-block/copy-button.tsx'
+import ZoomableImage from '@ui/zoomable-image.tsx'
 
 interface MarkdownBlockProps {
     markdown: string
@@ -62,11 +63,9 @@ const MarkdownBlock = ({ markdown }: MarkdownBlockProps) => {
                 },
                 img(props: ImgHTMLAttributes<HTMLImageElement>) {
                     return (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                            {...props}
-                            className="my-2 rounded-lg !bg-transparent"
-                        />
+                        <div className="relative my-2 w-full">
+                            <ZoomableImage src={props.src!} alt={props.alt!} />
+                        </div>
                     )
                 },
             }}

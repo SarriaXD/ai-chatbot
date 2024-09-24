@@ -61,7 +61,7 @@ const ChatSidebar = ({ open, onClose }: ChatSidebarProps) => {
                         WebkitBackdropFilter: 'blur(0px)',
                     }}
                     onClick={onClose}
-                    className="fixed z-50 size-full bg-transparent md:static md:w-auto md:backdrop-blur-none"
+                    className="fixed z-10 size-full bg-transparent md:static md:w-auto md:backdrop-blur-none"
                 >
                     <motion.div
                         initial={{ width: 0 }}

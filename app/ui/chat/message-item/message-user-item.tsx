@@ -1,5 +1,6 @@
 import React from 'react'
 import { MessageProps } from '@ui/chat/message-item/message-item.tsx'
+import ZoomableImage from '@ui/zoomable-image.tsx'
 
 const UserItem = ({ message }: MessageProps) => {
     return (
@@ -51,12 +52,7 @@ const ImagePreview = ({
 }) => {
     return (
         <div className="relative h-80 overflow-hidden rounded-lg">
-            {/* eslint-disable-next-line @next/next/no-img-element*/}
-            <img
-                src={url}
-                alt={name || 'user image'}
-                className={'h-full w-auto'}
-            />
+            <ZoomableImage src={url} alt={name || 'user image'} />
         </div>
     )
 }
