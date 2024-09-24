@@ -16,42 +16,40 @@ export type HandleSubmit = (
     }
 ) => void
 
+const isImage = (file: File) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg']
+    return allowedTypes.includes(file.type)
+}
+
+const isText = (file: File) => {
+    return file.type.startsWith('text/')
+}
+
 const validateFiles = (previousFilesState: FilesState, files: File[]) => {
     if (previousFilesState.files.length + files.length > 2) {
         throw new Error('You can only upload up to 2 files')
     }
 
-    // check if the file type is valid, currently only images and text are allowed
-    const allowedContentTypes = [
-        'image/jpeg',
-        'image/png',
-        'image/jpg',
-        'text/*',
-    ]
-    const isValidFileType = (file: File) =>
-        allowedContentTypes.some((allowedType) => {
-            if (allowedType.endsWith('/*')) {
-                // Handle wildcard types like 'text/*'
-                const prefix = allowedType.slice(0, -1) // Remove the '*'
-                return file.type.startsWith(prefix)
-            } else {
-                // Exact match for specific types
-                return file.type === allowedType
+    for (const file of files) {
+        if (isImage(file)) {
+            if (file.size > 5 * 1024 * 1024) {
+                throw new Error('Image size must be less than 5MB')
             }
-        })
-    if (files.some((file) => !isValidFileType(file))) {
-        throw new Error('only images and text files are allowed')
+        } else if (isText(file)) {
+            if (file.size > 100 * 1024) {
+                throw new Error('Text file size must be less than 100KB')
+            }
+        } else {
+            throw new Error(
+                'Currently only images and text files are supported'
+            )
+        }
     }
     // filter out files that are already uploaded
     const previousFile = previousFilesState.files.map((file) => file.name)
-    const filteredFiles = files.filter((file) => {
+    return files.filter((file) => {
         return !previousFile.includes(file.name)
     })
-    // check if the total size of files is less than 5MB
-    if (filteredFiles.some((file) => file.size > 5 * 1024 * 1024)) {
-        throw new Error('File size should be less than 5MB')
-    }
-    return filteredFiles
 }
 
 const useChatFiles = (onSubmit: HandleSubmit) => {
@@ -74,7 +72,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                         files: [
                             ...prevState.files,
                             ...validatedFiles.map((file) => {
-                                if (file.type.startsWith('image/')) {
+                                if (isImage(file)) {
                                     return {
                                         url: '',
                                         isUploading: true,
@@ -83,31 +81,36 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                                         contentType: file.type,
                                     }
                                 }
-                                return {
-                                    url: '',
-                                    isUploading: true,
-                                    previewUrl: '',
-                                    name: file.name,
-                                    contentType: file.type,
+                                if (isText(file)) {
+                                    return {
+                                        url: '',
+                                        isUploading: true,
+                                        previewUrl: '',
+                                        name: file.name,
+                                        contentType: file.type,
+                                    }
                                 }
+                                throw new Error('Unsupported file type')
                             }),
                         ],
                     }
                 })
                 for (const file of validatedFiles) {
                     const url = await chatApiClient.uploadFile(file, user.uid)
-                    setFilesState((before) => {
+                    setFilesState((previousFileState) => {
                         return {
-                            files: before.files.map((prevState) => {
-                                if (prevState.name === file.name) {
-                                    return {
-                                        ...prevState,
-                                        url: url,
-                                        isUploading: false,
+                            files: previousFileState.files.map(
+                                (previousFile) => {
+                                    if (previousFile.name === file.name) {
+                                        return {
+                                            ...previousFile,
+                                            url: url,
+                                            isUploading: false,
+                                        }
                                     }
+                                    return previousFile
                                 }
-                                return prevState
-                            }),
+                            ),
                         }
                     })
                 }
