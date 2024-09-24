@@ -87,7 +87,7 @@ const FilePreview = ({
 }) => {
     return (
         <div className="relative flex size-24 items-center justify-center rounded-2xl bg-white">
-            <span className="px-2 text-center text-[14px] font-extrabold tracking-tighter text-blue-600">
+            <span className="overflow-hidden text-ellipsis whitespace-nowrap px-2 text-center text-[14px] font-extrabold tracking-tighter text-blue-600">
                 {name}
             </span>
             <span className="absolute -bottom-2 rounded bg-blue-700 px-2 text-[14px] font-extrabold tracking-tighter">
