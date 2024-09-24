@@ -1,11 +1,12 @@
 import { Close } from '@public/icons'
 import React from 'react'
 
-interface TextPreviewItemProps {
+interface FilePreviewItemProps {
     url: string
     name: string
+    contentType: string
     isUploading: boolean
-    onFileRemove: (name: string, url: string) => void
+    onFileRemove: (name: string, contentType: string) => void
 }
 
 function separateFileNameAndExtension(fullFileName: string): {
@@ -26,11 +27,11 @@ function separateFileNameAndExtension(fullFileName: string): {
 }
 
 const FilePreviewItem = ({
-    url,
     name,
+    contentType,
     isUploading,
     onFileRemove,
-}: TextPreviewItemProps) => {
+}: FilePreviewItemProps) => {
     const { fileName, extension } = separateFileNameAndExtension(name)
     return (
         <div className="relative flex size-24 items-center justify-center rounded-2xl bg-white">
@@ -46,7 +47,7 @@ const FilePreviewItem = ({
                 </div>
             )}
             <button
-                onClick={() => onFileRemove(name, url)}
+                onClick={() => onFileRemove(name, contentType)}
                 type={'button'}
                 className="absolute right-0 top-0 size-5 -translate-y-1 translate-x-1 rounded-full bg-[#676767] p-[5px]"
             >

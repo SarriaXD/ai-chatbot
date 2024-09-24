@@ -164,22 +164,25 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
         [filesState, onSubmit]
     )
 
-    const onFileRemove = useCallback(async (name: string, url: string) => {
-        try {
-            setFilesState((prevState) => {
-                return {
-                    files: prevState.files.filter(
-                        (image) => image.name !== name
-                    ),
+    const onFileRemove = useCallback(
+        async (name: string, contentType: string) => {
+            try {
+                setFilesState((prevState) => {
+                    return {
+                        files: prevState.files.filter(
+                            (image) => image.name !== name
+                        ),
+                    }
+                })
+                if (user) {
+                    await chatApiClient.removeFile(name, contentType, user.uid)
                 }
-            })
-            await fetch(`/api/chat/upload?url=${url}`, {
-                method: 'DELETE',
-            })
-        } catch (e) {
-            toast.error('Error removing file from server')
-        }
-    }, [])
+            } catch (e) {
+                toast.error('Error removing file from server')
+            }
+        },
+        []
+    )
 
     const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
         onDrop: onFilesLoad,

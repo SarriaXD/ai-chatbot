@@ -3,15 +3,15 @@ import React from 'react'
 
 interface ImagePreviewItemProps {
     previewUrl: string
-    url: string
+    contentType: string
     name: string
     isUploading: boolean
-    onImageRemove: (name: string, url: string) => void
+    onImageRemove: (name: string, contentType: string) => void
 }
 
 const ImagePreviewItem = ({
     previewUrl,
-    url,
+    contentType,
     name,
     isUploading,
     onImageRemove,
@@ -33,7 +33,7 @@ const ImagePreviewItem = ({
                 </div>
             )}
             <button
-                onClick={() => onImageRemove(name, url)}
+                onClick={() => onImageRemove(name, contentType)}
                 type={'button'}
                 className="absolute right-0 top-0 size-5 -translate-y-1 translate-x-1 rounded-full bg-[#676767] p-[5px]"
             >

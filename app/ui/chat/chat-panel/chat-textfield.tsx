@@ -7,7 +7,7 @@ interface ChatTextFieldProps {
     isLoading: boolean
     filesState: FilesState
     onFilesLoad: (files: File[]) => void
-    onFileRemove: (name: string, url: string) => void
+    onFileRemove: (name: string, contentType: string) => void
     onOpenFile: () => void
     onMessageChange: (message: string) => void
     onSubmit: (event: FormEvent<HTMLFormElement>) => void

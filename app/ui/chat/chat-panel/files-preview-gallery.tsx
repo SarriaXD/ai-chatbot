@@ -11,7 +11,7 @@ interface FilesPreviewProps {
         name: string
         contentType: string
     }[]
-    onFileRemove: (name: string, url: string) => void
+    onFileRemove: (name: string, contentType: string) => void
 }
 
 const FilesPreviewGallery = ({ files, onFileRemove }: FilesPreviewProps) => {

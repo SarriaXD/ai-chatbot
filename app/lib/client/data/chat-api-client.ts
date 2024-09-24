@@ -8,7 +8,12 @@ import {
     query,
 } from 'firebase/firestore'
 import { firestore, storage } from '@lib/client/config/firebase-config.ts'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import {
+    deleteObject,
+    getDownloadURL,
+    ref,
+    uploadBytes,
+} from 'firebase/storage'
 
 const saveMessage = async ({
     chatId,
@@ -125,6 +130,24 @@ const uploadFile = async (file: File, userId: string) => {
     return await getDownloadURL(snapshot.ref)
 }
 
+const removeFile = async (
+    fileName: string,
+    contentType: string,
+    userId: string
+) => {
+    let folder
+    if (contentType.startsWith('image')) {
+        folder = 'images'
+    } else if (contentType.startsWith('text')) {
+        folder = 'texts'
+    } else {
+        folder = 'files'
+    }
+    const storageRef = ref(storage, `${userId}/${folder}/${fileName}`)
+    console.log('removing file', storageRef)
+    await deleteObject(storageRef)
+}
+
 export const chatApiClient = {
     saveMessage,
     updateHistory,
@@ -132,4 +155,5 @@ export const chatApiClient = {
     listenHistories,
     getSuggestion,
     uploadFile,
+    removeFile,
 }
