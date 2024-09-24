@@ -36,8 +36,9 @@ const validateFiles = (previousFilesState: FilesState, files: File[]) => {
                 throw new Error('Image size must be less than 5MB')
             }
         } else if (isText(file)) {
-            if (file.size > 100 * 1024) {
-                throw new Error('Text file size must be less than 100KB')
+            console.log('file size', file.size)
+            if (file.size > 500 * 1024) {
+                throw new Error('Text file size must be less than 10KB')
             }
         } else {
             throw new Error(

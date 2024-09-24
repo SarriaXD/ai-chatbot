@@ -1,4 +1,4 @@
-import { convertToCoreMessages, streamText, tool } from 'ai'
+import { streamText, tool } from 'ai'
 import { z } from 'zod'
 import {
     retrieveSearch,
@@ -7,6 +7,7 @@ import {
 import { openai } from '@ai-sdk/openai'
 import getWeatherData from '@lib/service/utils/weather-utils.ts'
 import { getWhoAmI } from '@lib/service/utils/who-am-I-utils.ts'
+import { convertToCoreMessages } from '@lib/service/message/convert-to-core-messages.ts'
 
 export const maxDuration = 30
 export const dynamic = 'force-dynamic'
@@ -26,13 +27,13 @@ const systemPrompt = (currentDate: string) => {
 
 const model = openai('gpt-4o-mini')
 
-// talk to the ai
+// talk to the AI
 export async function POST(request: Request) {
     const { messages } = await request.json()
     const result = await streamText({
         model: model,
         system: systemPrompt(new Date().toISOString()),
-        messages: convertToCoreMessages(messages),
+        messages: await convertToCoreMessages(messages),
         maxToolRoundtrips: 5,
         tools: {
             search: tool({
