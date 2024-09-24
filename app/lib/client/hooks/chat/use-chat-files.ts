@@ -1,8 +1,9 @@
 import { FormEvent, useCallback, useState } from 'react'
 import { FilesState } from '@ui/chat/chat-panel/chat-textfield.tsx'
 import { toast } from 'react-toastify'
-import { upload } from '@vercel/blob/client'
 import { useDropzone } from 'react-dropzone'
+import { chatApiClient } from '@lib/client/data/chat-api-client.ts'
+import { useAuth } from '@lib/client/hooks/use-auth.ts'
 
 export type HandleSubmit = (
     event?: FormEvent<HTMLFormElement>,
@@ -57,9 +58,14 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
     const [filesState, setFilesState] = useState<FilesState>({
         files: [],
     })
+    const { user } = useAuth()
 
     const onFilesLoad = useCallback(
         async (acceptedFiles: File[]) => {
+            if (!user) {
+                toast.error('Only authenticated users can upload files')
+                return
+            }
             try {
                 const validatedFiles = validateFiles(filesState, acceptedFiles)
                 // update the preview url for images for better user experience
@@ -89,17 +95,14 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                     }
                 })
                 for (const file of validatedFiles) {
-                    const result = await upload(file.name, file, {
-                        access: 'public',
-                        handleUploadUrl: '/api/chat/upload',
-                    })
+                    const url = await chatApiClient.uploadFile(file, user.uid)
                     setFilesState((before) => {
                         return {
                             files: before.files.map((prevState) => {
                                 if (prevState.name === file.name) {
                                     return {
                                         ...prevState,
-                                        url: result.url,
+                                        url: url,
                                         isUploading: false,
                                     }
                                 }
@@ -120,7 +123,7 @@ const useChatFiles = (onSubmit: HandleSubmit) => {
                 })
             }
         },
-        [filesState]
+        [filesState, user]
     )
 
     const onSubmitWithFiles = useCallback(

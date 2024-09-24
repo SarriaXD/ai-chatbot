@@ -61,7 +61,7 @@ const useChatPage = ({
                             })
                             titleLoaded.current = true
                         } catch (error) {
-                            toast.error('Can not update current title')
+                            toast.error(`Can not update current title ${error}`)
                         }
                     }
                 }

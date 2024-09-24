@@ -7,8 +7,8 @@ import {
     orderBy,
     query,
 } from 'firebase/firestore'
-import { db } from '@lib/client/config/firebase-config.ts'
-// import { Timestamp } from 'firebase/firestore'
+import { firestore, storage } from '@lib/client/config/firebase-config.ts'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 
 const saveMessage = async ({
     chatId,
@@ -70,19 +70,22 @@ const listenHistories = (
     ) => void,
     onError: (error: Error) => void
 ) => {
-    const userChatsRef = collection(db, 'users', userId, 'chats').withConverter(
-        {
-            fromFirestore: (snapshot, options) => {
-                const data = snapshot.data(options)
-                return {
-                    chatId: snapshot.id,
-                    title: data.title,
-                    updatedAt: data.updatedAt?.toDate(),
-                }
-            },
-            toFirestore: (chat) => chat,
-        }
-    )
+    const userChatsRef = collection(
+        firestore,
+        'users',
+        userId,
+        'chats'
+    ).withConverter({
+        fromFirestore: (snapshot, options) => {
+            const data = snapshot.data(options)
+            return {
+                chatId: snapshot.id,
+                title: data.title,
+                updatedAt: data.updatedAt?.toDate(),
+            }
+        },
+        toFirestore: (chat) => chat,
+    })
     const q = query(userChatsRef, orderBy('updatedAt', 'desc'), limit(pageSize))
     return onSnapshot(
         q,
@@ -108,10 +111,25 @@ const getSuggestion = async (
     return await response.json()
 }
 
+const uploadFile = async (file: File, userId: string) => {
+    let folder
+    if (file.type.startsWith('image')) {
+        folder = 'images'
+    } else if (file.type.startsWith('text')) {
+        folder = 'texts'
+    } else {
+        folder = 'files'
+    }
+    const storageRef = ref(storage, `${userId}/${folder}` + file.name)
+    const snapshot = await uploadBytes(storageRef, file)
+    return await getDownloadURL(snapshot.ref)
+}
+
 export const chatApiClient = {
     saveMessage,
     updateHistory,
     fetchHistory,
     listenHistories,
     getSuggestion,
+    uploadFile,
 }
