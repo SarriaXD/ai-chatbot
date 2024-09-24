@@ -120,7 +120,7 @@ const uploadFile = async (file: File, userId: string) => {
     } else {
         folder = 'files'
     }
-    const storageRef = ref(storage, `${userId}/${folder}` + file.name)
+    const storageRef = ref(storage, `${userId}/${folder}/` + file.name)
     const snapshot = await uploadBytes(storageRef, file)
     return await getDownloadURL(snapshot.ref)
 }
