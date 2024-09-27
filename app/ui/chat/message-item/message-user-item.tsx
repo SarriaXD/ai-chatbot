@@ -51,7 +51,7 @@ const ImagePreview = ({
     name: string | undefined
 }) => {
     return (
-        <div className="relative h-80 overflow-hidden rounded-lg">
+        <div className="h-80">
             <ZoomableImage src={url} alt={name || 'user image'} />
         </div>
     )

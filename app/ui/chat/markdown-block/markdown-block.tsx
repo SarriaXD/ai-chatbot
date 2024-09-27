@@ -63,7 +63,7 @@ const MarkdownBlock = ({ markdown }: MarkdownBlockProps) => {
                 },
                 img(props: ImgHTMLAttributes<HTMLImageElement>) {
                     return (
-                        <div className="relative my-2 w-full">
+                        <div className="my-2">
                             <ZoomableImage src={props.src!} alt={props.alt!} />
                         </div>
                     )

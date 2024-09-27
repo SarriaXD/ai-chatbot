@@ -11,7 +11,9 @@ const ZoomableImage = (props: IntrinsicElements['img']) => {
                 onClick={() => setOpen(true)}
                 src={props.src}
                 alt={props.alt}
-                className={'size-full rounded-lg !bg-transparent object-cover'}
+                className={
+                    'max-h-full max-w-full rounded-lg !bg-transparent object-cover'
+                }
             />
 
             <AnimatePresence>
@@ -40,7 +42,7 @@ const ZoomableImage = (props: IntrinsicElements['img']) => {
                             layoutId={`expandable-image-${props.src}`}
                             src={props.src}
                             alt={props.alt}
-                            className={`size-[95%] rounded-xl !bg-transparent object-contain`}
+                            className={`max-h-[95%] max-w-[95%] rounded-xl !bg-transparent object-contain`}
                             transition={{
                                 ease: [0.76, 0, 0.24, 1],
                                 duration: 0.6,
